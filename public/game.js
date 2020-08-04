@@ -18,6 +18,7 @@ class Game {
         this.playerDead = false;
 
         this.time = 0;
+        this.rewinding = false
 
         this.maxRewind = 300;
 
@@ -25,11 +26,16 @@ class Game {
     }
 
     update() {
-        this.time++;
-        if (!this.playerDead) {
-            this.updateEntitiesBullets();
+
+        // if (!this.playerDead) {
+        if (!this.rewinding) {
+            this.time++;
             this.updateSpawns();
+            this.updateEntitiesBullets();
+        } else {
+            this.rewind();
         }
+        // }
     }
 
     updateSpawns() {
@@ -59,43 +65,77 @@ class Game {
 
     updateEntitiesBullets() {
         for (let entity of this.entities) {
-            let bullets = entity.superUpdate(this);
+            if (entity.deathTime < 0) {
+                let bullets = entity.superUpdate(this);
 
-            for (let bullet of bullets) {
-                this.bullets.push(bullet);
+                for (let bullet of bullets) {
+                    this.bullets.push(bullet);
+                }
             }
         }
 
         for (let i = this.bullets.length - 1; i >= 0; i--) {
-            if (this.bullets[i].update(this)) {
-                this.bullets.splice(i, 1);
+            let bullet = this.bullets[i];
+            if (bullet.deathTime >= 0) {
+                if (this.time - bullet.deathTime > this.maxRewind) {
+                    this.bullets.splice(i, 1);
+                }
+
+            } else if (bullet.update(this)) {
+                bullet.deathTime = this.time;
+                // this.bullets.splice(i, 1);
             }
         }
 
         for (let i = this.entities.length - 1; i >= 0; i--) {
-            if (this.entities[i].hit) {
-                this.entities.splice(i, 1);
+            let entity = this.entities[i];
+            if (entity.deathTime >= 0) {
+                if (this.time - entity.deathTime > this.maxRewind) {
+                    this.entities.splice(i, 1);
+                }
+
+            } else if (entity.hit) {
+                entity.deathTime = this.time;
+                // this.entities.splice(i, 1);
             }
         }
 
         if (this.player.hit) {
             this.playerDead = true;
+            this.rewinding = true;
 
             setTimeout(() => {
                 game = new Game();
-            }, 1000);
+            }, 5000);
+        }
+    }
+
+    rewind() {
+        if (this.time == 0) return;
+        this.time--;
+
+        for (let entity of this.entities) {
+            entity.rewind(game);
+        }
+
+        for (let bullet of this.bullets) {
+            bullet.rewind(game);
         }
     }
 
     toObject() {
         let entities = [];
         for (let entity of this.entities) {
-            entities.push(entity.toObject());
+            if (entity.deathTime < 0 && entity.birthTime <= this.time) {
+                entities.push(entity.toObject());
+            }
         }
 
         let bullets = [];
         for (let bullet of this.bullets) {
-            bullets.push(bullet.toObject());
+            if (bullet.deathTime < 0 && bullet.birthTime <= this.time) {
+                bullets.push(bullet.toObject());
+            }
         }
 
         return { entities, bullets }

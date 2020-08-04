@@ -9,10 +9,12 @@ class Bullet {
         this.playerFired = playerFired;
 
         this.past = [];
+        this.birthTime = -1;
         this.deathTime = -1;
     }
 
     update(game) {
+        if (this.birthTime < 0) this.birthTime = game.time; 
         let x = this.pos.x;
         let y = this.pos.y;
 
@@ -26,11 +28,13 @@ class Bullet {
             x += step * Math.cos(this.angle);
             y += step * Math.sin(this.angle);
             distanceMoved += step;
-            collide = this.checkCollisions(x, y, game.entities);
+            collide = this.checkCollisions(x, y, game);
         }
 
-        this.pos.add(this.vel);
+        this.pos.x = x;
+        this.pos.y = y;
 
+        this.past.push({ x, y });
         if (this.past.length > game.maxRewind) {
             this.past.splice(0, 1);
         }
@@ -38,10 +42,23 @@ class Bullet {
         return collide;
     }
 
-    checkCollisions(x, y, entities) {
+    rewind(game) {
+        if (this.past.length == 0) {
+            return;
+        }
+        if (game.time < this.deathTime || this.deathTime < 0) {
+            let pastData = this.past.pop();
+            this.pos.x = pastData.x;
+            this.pos.y = pastData.y;
+            this.deathTime = -1;
+        }
+    }
+
+    checkCollisions(x, y, game) {
         let testVec = createVector(x, y);
-        for (let entity of entities) {
-            if (this.playerFired == (entity.type == 'player')) continue
+        for (let entity of game.entities) {
+            if (entity.deathTime >= 0 || entity.birthTime > game.time) continue;
+            if (this.playerFired == (entity.type == 'player')) continue;
             let diffVec = p5.Vector.sub(testVec, entity.pos);
             let dSq = diffVec.magSq();
             if (dSq < entity.r * entity.r) {

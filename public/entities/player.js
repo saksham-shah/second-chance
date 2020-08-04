@@ -52,6 +52,8 @@ class Player extends Entity {
         let dy = mousePos.y - this.pos.y;
 
         this.angle = Math.atan2(dy, dx);
+
+        this.frameData.angle = this.angle;
     }
 
     shoot() {
@@ -61,6 +63,19 @@ class Player extends Entity {
         pos.add(p5.Vector.fromAngle(this.angle), 15);
 
         return new Bullet(pos, 15, this.angle);
+    }
+
+    rewind(game) {
+        if (this.past.length == 0) {
+            return;
+        }
+        if (game.time < this.deathTime || this.deathTime < 0) {
+            let pastData = this.past.pop();
+            this.pos.x = pastData.x;
+            this.pos.y = pastData.y;
+            this.angle = pastData.angle;
+            this.deathTime = -1;
+        }
     }
 
     toObject() {
