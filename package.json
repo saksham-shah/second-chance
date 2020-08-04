@@ -1,0 +1,14 @@
+{
+  "name": "brackeys-aug2020",
+  "version": "1.0.0",
+  "description": "Game for the Brackeys Jam 2020.2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Saksham Shah",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
