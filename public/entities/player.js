@@ -7,7 +7,7 @@ class Player extends Entity {
         this.cooldown = 0;
     }
 
-    update() {
+    update(game) {
         this.move();
         this.aimToMouse();
 

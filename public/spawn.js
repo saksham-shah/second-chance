@@ -15,7 +15,6 @@ function createSpawns() {
             function(game) {
                 let pos = createVector(50 + Math.random() * 800, 50 + Math.random() * 500);
                 game.entities.push(new Shooty(pos));
-                console.log(pos);
             }
         )
     ]
@@ -56,5 +55,4 @@ Game.prototype.spawnEnemy = function() {
             return possible[i];
         }
     }
-    console.log(':(', possible.length, this.spawnPoints);
 }

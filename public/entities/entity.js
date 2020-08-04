@@ -11,12 +11,15 @@ class Entity {
         this.maxVel = 7;
 
         this.hit = false;
+
+        this.past = [];
+        this.deathTime = -1;
     }
 
-    superUpdate(player) {
+    superUpdate(game) {
         this.acc = createVector(0, 0);
 
-        let bullets = this.update(player);
+        let bullets = this.update(game);
 
         this.acc.limit(this.maxAcc);
         this.vel.add(this.acc);
@@ -25,6 +28,10 @@ class Entity {
         this.pos.add(this.vel);
 
         this.limitToWalls();
+
+        if (this.past.length > game.maxRewind) {
+            this.past.splice(0, 1);
+        }
 
         return bullets;
     }

@@ -6,10 +6,13 @@ class Bullet {
         this.speed = speed;
         this.angle = angle;
 
-        this.playerFired = playerFired
+        this.playerFired = playerFired;
+
+        this.past = [];
+        this.deathTime = -1;
     }
 
-    update(entities) {
+    update(game) {
         let x = this.pos.x;
         let y = this.pos.y;
 
@@ -23,10 +26,15 @@ class Bullet {
             x += step * Math.cos(this.angle);
             y += step * Math.sin(this.angle);
             distanceMoved += step;
-            collide = this.checkCollisions(x, y, entities);
+            collide = this.checkCollisions(x, y, game.entities);
         }
 
         this.pos.add(this.vel);
+
+        if (this.past.length > game.maxRewind) {
+            this.past.splice(0, 1);
+        }
+
         return collide;
     }
 

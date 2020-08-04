@@ -15,32 +15,21 @@ class Game {
         this.nextWave = 20;
         this.waveStep = 4;
 
+        this.playerDead = false;
+
+        this.time = 0;
+
+        this.maxRewind = 300;
+
         // this.addEnemy();
     }
 
     update() {
-        let bullets;
-        for (let entity of this.entities) {
-            bullets = entity.superUpdate(this.player);
-
-            for (let bullet of bullets) {
-                this.bullets.push(bullet);
-            }
+        this.time++;
+        if (!this.playerDead) {
+            this.updateEntitiesBullets();
+            this.updateSpawns();
         }
-
-        for (let i = this.bullets.length - 1; i >= 0; i--) {
-            if (this.bullets[i].update(this.entities)) {
-                this.bullets.splice(i, 1);
-            }
-        }
-
-        for (let i = this.entities.length - 1; i >= 0; i--) {
-            if (this.entities[i].hit) {
-                this.entities.splice(i, 1);
-            }
-        }
-
-        this.updateSpawns();
     }
 
     updateSpawns() {
@@ -62,17 +51,40 @@ class Game {
             if (Math.random() < this.spawnPoints * 0.025 || this.timeSinceEnemy > 180) {
                 this.spawnEnemy();
                 this.timeSinceEnemy = 0;
-            } else {
-                console.log(this.timeSinceEnemy)
             }
         } else {
             this.counter -= 1;
         }
     }
 
-    addEnemy() {
-        let pos = createVector(50 + Math.random() * 800, 50 + Math.random() * 500);
-        this.entities.push(new Shooty(pos));
+    updateEntitiesBullets() {
+        for (let entity of this.entities) {
+            let bullets = entity.superUpdate(this);
+
+            for (let bullet of bullets) {
+                this.bullets.push(bullet);
+            }
+        }
+
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+            if (this.bullets[i].update(this)) {
+                this.bullets.splice(i, 1);
+            }
+        }
+
+        for (let i = this.entities.length - 1; i >= 0; i--) {
+            if (this.entities[i].hit) {
+                this.entities.splice(i, 1);
+            }
+        }
+
+        if (this.player.hit) {
+            this.playerDead = true;
+
+            setTimeout(() => {
+                game = new Game();
+            }, 1000);
+        }
     }
 
     toObject() {

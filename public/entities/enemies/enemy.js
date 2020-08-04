@@ -3,13 +3,13 @@ class Enemy extends Entity {
         super(pos, r, type);
     }
 
-    update(player) {
-        this.moveToPlayer(player);
+    update(game) {
+        this.moveToPlayer(game.player);
 
-        return this.subUpdate(player);
+        return this.subUpdate(game);
     }
 
-    subUpdate(player) {
+    subUpdate(game) {
         return [];
     }
 

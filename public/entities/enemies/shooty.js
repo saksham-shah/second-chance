@@ -15,14 +15,14 @@ class Shooty extends Enemy {
         this.cooldown = 60;
     }
 
-    subUpdate(player) {
+    subUpdate(game) {
         let bullets = [];
 
         this.updateEnraged();
 
         if (this.cooldown > 0) this.cooldown--;
 
-        if (this.cooldown == 0) bullets.push(this.shoot(player));
+        if (this.cooldown == 0) bullets.push(this.shoot(game.player));
 
         return bullets;
     }
@@ -43,7 +43,6 @@ class Shooty extends Enemy {
         this.timeSinceEnraged++;
 
         if (Math.random() < this.timeSinceEnraged / 600 / 100) {
-            console.log('RAGE!!!', this.timeSinceEnraged);
             this.enraged = true;
             this.rageUpdate();
             return;
