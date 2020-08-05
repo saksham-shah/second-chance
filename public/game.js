@@ -18,9 +18,10 @@ class Game {
         this.playerDead = false;
 
         this.time = 0;
-        this.rewinding = false
+        this.lastRewind = 0;
+        this.rewinding = false;
 
-        this.maxRewind = 300;
+        this.maxRewind = 350;
 
         // this.addEnemy();
     }
@@ -29,11 +30,13 @@ class Game {
 
         // if (!this.playerDead) {
         if (!this.rewinding) {
-            this.time++;
-            this.updateSpawns();
+            if (this.time >= this.lastRewind) this.updateSpawns();
             this.updateEntitiesBullets();
+            this.time++;
         } else {
-            this.rewind();
+            this.updateEntitiesBullets();
+            if (this.time > 0) this.time--;
+            // this.rewind();
         }
         // }
     }
@@ -64,26 +67,37 @@ class Game {
     }
 
     updateEntitiesBullets() {
+        if (this.time < 0) return;
         for (let entity of this.entities) {
-            if (entity.deathTime < 0) {
+            if (entity.deathTime >= this.time) {
+                // console.log('reviving', entity.type, this.time);
+                entity.deathTime = -1;
+                entity.hit = false;
+            }
+            if (entity.deathTime < 0 && entity.birthTime <= this.time) {
                 let bullets = entity.superUpdate(this);
 
                 for (let bullet of bullets) {
                     this.bullets.push(bullet);
+                    // console.log(bullet);
                 }
             }
         }
 
         for (let i = this.bullets.length - 1; i >= 0; i--) {
             let bullet = this.bullets[i];
+            if (bullet.deathTime >= this.time) bullet.deathTime = -1;
             if (bullet.deathTime >= 0) {
                 if (this.time - bullet.deathTime > this.maxRewind) {
                     this.bullets.splice(i, 1);
                 }
 
-            } else if (bullet.update(this)) {
+            } else if (bullet.birthTime <= this.time && bullet.update(this)) {
                 bullet.deathTime = this.time;
                 // this.bullets.splice(i, 1);
+
+            } else if (bullet.birthTime > this.time) {
+                this.bullets.splice(i, 1);
             }
         }
 
@@ -101,11 +115,13 @@ class Game {
         }
 
         if (this.player.hit) {
-            this.playerDead = true;
+            // this.playerDead = true;
             this.rewinding = true;
+            this.lastRewind = this.time;
 
             setTimeout(() => {
-                game = new Game();
+                // game = new Game();
+                this.rewinding = false;
             }, 5000);
         }
     }
@@ -115,11 +131,15 @@ class Game {
         this.time--;
 
         for (let entity of this.entities) {
-            entity.rewind(game);
+            entity.superUpdate(this)
+            // entity.rewind(game);
         }
 
         for (let bullet of this.bullets) {
-            bullet.rewind(game);
+            if (bullet.deathTime >= 0 && bullet.deathTime <= this.time) continue;
+            if (bullet.birthTime > this.time) continue;
+            bullet.update(this);
+            // bullet.rewind(game);
         }
     }
 

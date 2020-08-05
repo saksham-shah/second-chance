@@ -3,10 +3,10 @@ class Enemy extends Entity {
         super(pos, r, type);
     }
 
-    update(game) {
-        this.moveToPlayer(game.player);
+    update(game, pastData) {
+        if (!pastData) this.moveToPlayer(game.player);
 
-        return this.subUpdate(game);
+        return this.subUpdate(game, pastData);
     }
 
     subUpdate(game) {

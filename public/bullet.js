@@ -14,6 +14,15 @@ class Bullet {
     }
 
     update(game) {
+        if (game.rewinding && this.past.length > 0 && this.past[this.past.length - 1].time >= game.time) {
+            let indexFromEnd = this.past[this.past.length - 1].time - game.time;
+            let pastData = this.past[this.past.length - indexFromEnd - 1];
+            this.pos.x = pastData.x;
+            this.pos.y = pastData.y;
+            this.deathTime = -1;
+            return false;
+        }
+
         if (this.birthTime < 0) this.birthTime = game.time; 
         let x = this.pos.x;
         let y = this.pos.y;
@@ -34,7 +43,7 @@ class Bullet {
         this.pos.x = x;
         this.pos.y = y;
 
-        this.past.push({ x, y });
+        this.past.push({ x, y, time: game.time });
         if (this.past.length > game.maxRewind) {
             this.past.splice(0, 1);
         }
@@ -43,22 +52,30 @@ class Bullet {
     }
 
     rewind(game) {
-        if (this.past.length == 0) {
-            return;
-        }
-        if (game.time < this.deathTime || this.deathTime < 0) {
-            let pastData = this.past.pop();
+        // if (this.past.length == 0) {
+        //     return;
+        // }
+        if (game.time < this.birthTime) return;
+        if (this.past[this.past.length - 1].time > game.time) {
+            let indexFromEnd = this.past[this.past.length - 1].time - game.time;
+            let pastData = this.past[this.past.length - indexFromEnd];
             this.pos.x = pastData.x;
             this.pos.y = pastData.y;
             this.deathTime = -1;
         }
+        // if (game.time < this.deathTime || this.deathTime < 0) {
+        //     let pastData = this.past.pop();
+        //     this.pos.x = pastData.x;
+        //     this.pos.y = pastData.y;
+        //     this.deathTime = -1;
+        // }
     }
 
     checkCollisions(x, y, game) {
         let testVec = createVector(x, y);
         for (let entity of game.entities) {
             if (entity.deathTime >= 0 || entity.birthTime > game.time) continue;
-            if (this.playerFired == (entity.type == 'player')) continue;
+            if (this.playerFired == entity.player) continue;
             let diffVec = p5.Vector.sub(testVec, entity.pos);
             let dSq = diffVec.magSq();
             if (dSq < entity.r * entity.r) {

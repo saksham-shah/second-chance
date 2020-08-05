@@ -4,6 +4,8 @@ class Entity {
         this.vel = vel;
         this.acc = null;
 
+        this.player = false;
+
         this.type = type;
         this.r = r;
 
@@ -19,9 +21,18 @@ class Entity {
     }
 
     superUpdate(game) {
+        if (this.past.length > 0 && this.past[this.past.length - 1].time >= game.time) {
+            let indexFromEnd = this.past[this.past.length - 1].time - game.time;
+            let pastData = this.past[this.past.length - indexFromEnd - 1];
+            this.pos.x = pastData.x;
+            this.pos.y = pastData.y;
+            this.deathTime = -1;
+            return this.update(game, pastData);
+        }
+
         if (this.birthTime < 0) this.birthTime = game.time; 
         this.acc = createVector(0, 0);
-        this.frameData = {};
+        this.frameData = { time: game.time };
 
         let bullets = this.update(game);
 
@@ -61,11 +72,19 @@ class Entity {
     }
 
     rewind(game) {
-        if (this.past.length == 0) {
-            return;
-        }
-        if (game.time < this.deathTime || this.deathTime < 0) {
-            let pastData = this.past.pop();
+        // if (this.past.length == 0) {
+        //     return;
+        // }
+        // if (game.time < this.deathTime || this.deathTime < 0) {
+        //     let pastData = this.past.pop();
+        //     this.pos.x = pastData.x;
+        //     this.pos.y = pastData.y;
+        //     this.deathTime = -1;
+        // }
+        if (game.time < this.birthTime) return;
+        if (this.past[this.past.length - 1].time > game.time) {
+            let indexFromEnd = this.past[this.past.length - 1].time - game.time;
+            let pastData = this.past[this.past.length - indexFromEnd];
             this.pos.x = pastData.x;
             this.pos.y = pastData.y;
             this.deathTime = -1;

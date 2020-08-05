@@ -4,16 +4,30 @@ class Player extends Entity {
 
         this.fireRate = 10;
 
+        this.player = true;
+
         this.cooldown = 0;
     }
 
-    update(game) {
+    update(game, pastData) {
+        let bullets = [];
+
+        if (pastData) {
+            this.angle = pastData.angle;
+            if (pastData.shoot != undefined && !game.rewinding) {
+                let pos = this.pos.copy();
+                pos.add(p5.Vector.fromAngle(this.angle), 15);
+
+                bullets.push(new Bullet(pos, 15, this.angle));
+            }
+            return bullets;
+        }
+
         this.move();
         this.aimToMouse();
 
         if (this.cooldown > 0) this.cooldown--;
 
-        let bullets = [];
 
         if (mouseIsPressed && this.cooldown == 0) bullets.push(this.shoot());
 
@@ -57,6 +71,7 @@ class Player extends Entity {
     }
 
     shoot() {
+        this.frameData.shoot = this.angle;
         this.cooldown = this.fireRate;
 
         let pos = this.pos.copy();
@@ -66,11 +81,20 @@ class Player extends Entity {
     }
 
     rewind(game) {
-        if (this.past.length == 0) {
-            return;
-        }
-        if (game.time < this.deathTime || this.deathTime < 0) {
-            let pastData = this.past.pop();
+        // if (this.past.length == 0) {
+        //     return;
+        // }
+        // if (game.time < this.deathTime || this.deathTime < 0) {
+        //     let pastData = this.past.pop();
+        //     this.pos.x = pastData.x;
+        //     this.pos.y = pastData.y;
+        //     this.angle = pastData.angle;
+        //     this.deathTime = -1;
+        // }
+        if (game.time < this.birthTime) return;
+        if (this.past[this.past.length - 1].time > game.time) {
+            let indexFromEnd = this.past[this.past.length - 1].time - game.time;
+            let pastData = this.past[this.past.length - indexFromEnd];
             this.pos.x = pastData.x;
             this.pos.y = pastData.y;
             this.angle = pastData.angle;

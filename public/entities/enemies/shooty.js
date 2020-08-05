@@ -15,14 +15,22 @@ class Shooty extends Enemy {
         this.cooldown = 60;
     }
 
-    subUpdate(game) {
+    subUpdate(game, pastData) {
         let bullets = [];
 
-        this.updateEnraged();
+        if (!pastData) {
+            this.updateEnraged();
 
-        if (this.cooldown > 0) this.cooldown--;
+            if (this.cooldown > 0) this.cooldown--;
+    
+            if (this.cooldown == 0) bullets.push(this.shoot(game.player));
 
-        if (this.cooldown == 0) bullets.push(this.shoot(game.player));
+        } else {
+            if (pastData.shoot != undefined && !game.rewinding) {
+                bullets.push(new Bullet(this.pos.copy(), 15, pastData.shoot, false));
+                return bullets;
+            }
+        }
 
         return bullets;
     }
@@ -73,6 +81,8 @@ class Shooty extends Enemy {
         }
 
         let angle = Math.atan2(diff.y, diff.x);
+
+        this.frameData.shoot = angle;
 
         return new Bullet(this.pos.copy(), 15, angle, false);
     }
