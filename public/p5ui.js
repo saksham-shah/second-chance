@@ -287,7 +287,7 @@ class P5UI {
         if (backgroundColour != -1) {
             background(backgroundColour);
         } else {
-            clear();
+            // clear();
         }
         push();
         translate(this.screenPosition.x, this.screenPosition.y);

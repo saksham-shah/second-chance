@@ -1,6 +1,9 @@
 class Enemy extends Entity {
     constructor(pos, r, type) {
         super(pos, r, type);
+
+        this.scoreValue = 10;
+        this.scored = false;
     }
 
     update(game, pastData) {

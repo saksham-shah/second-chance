@@ -90,9 +90,9 @@ function addStyles() {
         },
         screen: {
             default: {
-                background: [0, 0, 30],
+                // background: [0, 0, 30],
                 outer: [0, 0, 40],
-                stroke: [0, 0, 100],
+                // stroke: [0, 0, 100],
                 tooltip: {
                     fill: 200,
                     stroke: 50,

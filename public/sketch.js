@@ -1,10 +1,14 @@
 let game;
-let gameWidth = 900, gameHeight = 600;
+let gameWidth = 800, gameHeight = 800;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    createUI(gameWidth, gameHeight, 0.9);
+    createUI({
+        width: 1600,
+        height: 900,
+        buffer: 1
+    });
 
     addScreen('game', {
         draw: () => drawGame(game.toObject())

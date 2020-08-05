@@ -13,6 +13,8 @@ class Shooty extends Enemy {
         this.fireRate = 40;
 
         this.cooldown = 60;
+
+        this.scoreValue = 10;
     }
 
     subUpdate(game, pastData) {

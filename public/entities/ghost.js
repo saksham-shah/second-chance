@@ -1,27 +1,27 @@
-class Player extends Entity {
-    constructor(pos) {
-        super(pos, 10, 'player');
+class Ghost extends Entity {
+    constructor(player) {
+        super(player.pos.copy(), player.r, 'ghost');
 
-        this.fireRate = 10;
+        this.fireRate = player.fireRate;
 
         this.player = true;
 
-        this.cooldown = 0;
+        this.cooldown = player.cooldown;
     }
 
     update(game, pastData) {
         let bullets = [];
 
-        if (pastData) {
-            this.angle = pastData.angle;
-            if (pastData.shoot != undefined && !game.rewinding) {
-                let pos = this.pos.copy();
-                pos.add(p5.Vector.fromAngle(this.angle), 15);
+        // if (pastData) {
+        //     this.angle = pastData.angle;
+        //     if (pastData.shoot != undefined && !game.rewinding) {
+        //         let pos = this.pos.copy();
+        //         pos.add(p5.Vector.fromAngle(this.angle), 15);
 
-                bullets.push(new Bullet(pos, 15, this.angle));
-            }
-            return bullets;
-        }
+        //         bullets.push(new Bullet(pos, 15, this.angle));
+        //     }
+        //     return bullets;
+        // }
 
         this.move();
         this.aimToMouse();
@@ -78,28 +78,6 @@ class Player extends Entity {
         pos.add(p5.Vector.fromAngle(this.angle), 15);
 
         return new Bullet(pos, 15, this.angle);
-    }
-
-    rewind(game) {
-        // if (this.past.length == 0) {
-        //     return;
-        // }
-        // if (game.time < this.deathTime || this.deathTime < 0) {
-        //     let pastData = this.past.pop();
-        //     this.pos.x = pastData.x;
-        //     this.pos.y = pastData.y;
-        //     this.angle = pastData.angle;
-        //     this.deathTime = -1;
-        // }
-        if (game.time < this.birthTime) return;
-        if (this.past[this.past.length - 1].time > game.time) {
-            let indexFromEnd = this.past[this.past.length - 1].time - game.time;
-            let pastData = this.past[this.past.length - indexFromEnd];
-            this.pos.x = pastData.x;
-            this.pos.y = pastData.y;
-            this.angle = pastData.angle;
-            this.deathTime = -1;
-        }
     }
 
     toObject() {

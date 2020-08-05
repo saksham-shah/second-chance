@@ -7,6 +7,8 @@ class Game {
         this.player = new Player(createVector(450, 300));
         this.entities.push(this.player);
 
+        this.ghost = null;
+
         this.spawnPoints = 0;
         this.timeSinceWave = 0;
         this.timeSinceEnemy = 0;
@@ -21,7 +23,13 @@ class Game {
         this.lastRewind = 0;
         this.rewinding = false;
 
-        this.maxRewind = 350;
+        this.blur = 1;
+
+        this.maxRewind = 120;
+
+        this.score = 0;
+        this.lastKill = 0;
+        this.combo = 0;
 
         // this.addEnemy();
     }
@@ -30,12 +38,34 @@ class Game {
 
         // if (!this.playerDead) {
         if (!this.rewinding) {
-            if (this.time >= this.lastRewind) this.updateSpawns();
+            if (this.time >= this.lastRewind) {
+                this.updateSpawns();
+                if (this.ghost) {
+                    // this.ghost.hit = true;
+                    this.ghost.deathTime = this.time;
+                    this.ghost = null;
+                }
+            }
             this.updateEntitiesBullets();
             this.time++;
+            this.blur = 1;
+
+            if (this.lastKill < 60) {
+                this.lastKill++;
+            } else {
+                this.combo = 0;
+            }
         } else {
             this.updateEntitiesBullets();
             if (this.time > 0) this.time--;
+
+            if (this.time <= this.lastRewind - this.maxRewind + 2) {
+                this.toggleRewind(false);
+            } else if (this.time <= this.lastRewind - this.maxRewind + 20) {
+                this.blur += 0.1;
+            }
+
+            this.blur -= 0.05;
             // this.rewind();
         }
         // }
@@ -69,7 +99,7 @@ class Game {
     updateEntitiesBullets() {
         if (this.time < 0) return;
         for (let entity of this.entities) {
-            if (entity.deathTime >= this.time) {
+            if (entity.deathTime >= this.time && entity.type != 'ghost') {
                 // console.log('reviving', entity.type, this.time);
                 entity.deathTime = -1;
                 entity.hit = false;
@@ -104,25 +134,56 @@ class Game {
         for (let i = this.entities.length - 1; i >= 0; i--) {
             let entity = this.entities[i];
             if (entity.deathTime >= 0) {
-                if (this.time - entity.deathTime > this.maxRewind) {
+                if (this.time - entity.deathTime > this.maxRewind || entity.type == 'ghost') {
                     this.entities.splice(i, 1);
                 }
 
             } else if (entity.hit) {
-                entity.deathTime = this.time;
+                if (entity.type != 'ghost') entity.deathTime = this.time;
+
+                if (!entity.player && !this.rewinding && !entity.scored) {
+                    entity.scored = true;
+                    this.lastKill = 0;
+                    this.combo++;
+
+                    let combo = this.combo;
+                    if (combo > 10) combo = 10;
+
+                    // Increase score
+                    this.score += entity.scoreValue * combo;
+                }
                 // this.entities.splice(i, 1);
             }
         }
 
         if (this.player.hit) {
             // this.playerDead = true;
-            this.rewinding = true;
-            this.lastRewind = this.time;
+            // this.rewinding = true;
+            // this.lastRewind = this.time;
+            if (this.time < this.lastRewind + this.maxRewind + 10) {
+                game = new Game();
+                return;
+            }
+            this.player.hit = false;
+            this.toggleRewind(true);
 
-            setTimeout(() => {
-                // game = new Game();
-                this.rewinding = false;
-            }, 5000);
+            // setTimeout(() => {
+            //     // game = new Game();
+            //     // this.rewinding = false;
+            //     this.toggleRewind(false);
+            // }, 5000);
+        }
+    }
+
+    toggleRewind(rewind) {
+        this.rewinding = rewind;
+
+        if (rewind) {
+            this.lastRewind = this.time;
+            this.combo = 0;
+        } else {
+            this.ghost = new Ghost(this.player);
+            this.entities.push(this.ghost);
         }
     }
 
@@ -158,6 +219,9 @@ class Game {
             }
         }
 
-        return { entities, bullets }
+        if (this.blur < 0) this.blur = 0;
+        if (this.blur > 1) this.blur = 1;
+
+        return { entities, bullets, rewind: this.blur, time: this.time, score: this.score, combo: this.combo, lastKill: this.lastKill }
     }
 }
