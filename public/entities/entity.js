@@ -3,11 +3,14 @@ class Entity {
         this.pos = pos;
         this.vel = vel;
         this.acc = null;
+        this.angle = 0;
 
         this.player = false;
 
         this.type = type;
         this.r = r;
+
+        this.colour = 255;
 
         this.maxAcc = 0.8;
         this.maxVel = 7;
@@ -26,6 +29,7 @@ class Entity {
             let pastData = this.past[this.past.length - indexFromEnd - 1];
             this.pos.x = pastData.x;
             this.pos.y = pastData.y;
+            this.angle = pastData.angle;
             this.deathTime = -1;
             return this.update(game, pastData);
         }
@@ -42,10 +46,13 @@ class Entity {
         this.vel.limit(this.maxVel);
         this.pos.add(this.vel);
 
+        this.angle = Math.atan2(this.vel.y, this.vel.x);
+
         this.limitToWalls();
 
         this.frameData.x = this.pos.x;
         this.frameData.y = this.pos.y;
+        this.frameData.angle = this.angle;
 
         this.past.push(this.frameData);
         if (this.past.length > game.maxRewind) {
@@ -94,7 +101,7 @@ class Entity {
     toObject() {
         return {
             pos: this.pos,
-            angle: 0,
+            angle: this.angle,
             // vel: this.vel,
             r: this.r,
             type: this.type

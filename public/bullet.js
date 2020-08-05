@@ -1,5 +1,5 @@
 class Bullet {
-    constructor(pos, speed, angle, playerFired = true) {
+    constructor(pos, speed, angle, playerFired = true, colour = [255, 255, 0]) {
         this.pos = pos;
         this.vel = p5.Vector.fromAngle(angle, speed);
 
@@ -7,6 +7,8 @@ class Bullet {
         this.angle = angle;
 
         this.playerFired = playerFired;
+
+        this.colour = colour;
 
         this.past = [];
         this.birthTime = -1;
@@ -30,7 +32,7 @@ class Bullet {
         // Ensures that the bullet only moves a maximum of 5 pixels at a time
         // Prevents fast bullets from going through objects without skipping them
         var distanceMoved = 0;
-        var step = this.speed / Math.ceil(this.speed / 3);
+        var step = this.speed / Math.ceil(this.speed);
         var collide = false;
         // Keeps moving until it collides or moves the max distance of one frame
         while (distanceMoved < this.speed && !collide) {
@@ -94,7 +96,8 @@ class Bullet {
     toObject() {
         return {
             pos: this.pos,
-            angle: this.angle
+            angle: this.angle,
+            colour: this.colour
         }
     }
 }

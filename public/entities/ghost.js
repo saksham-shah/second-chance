@@ -7,18 +7,20 @@ class Ghost extends Entity {
         this.player = true;
 
         this.cooldown = player.cooldown;
+
+        this.colour = [0, 255, 255];
     }
 
     update(game, pastData) {
         let bullets = [];
 
         // if (pastData) {
-        //     this.angle = pastData.angle;
+        //     this.mouseAngle = pastData.mouseAngle;
         //     if (pastData.shoot != undefined && !game.rewinding) {
         //         let pos = this.pos.copy();
-        //         pos.add(p5.Vector.fromAngle(this.angle), 15);
+        //         pos.add(p5.Vector.fromAngle(this.mouseAngle), 15);
 
-        //         bullets.push(new Bullet(pos, 15, this.angle));
+        //         bullets.push(new Bullet(pos, 15, this.mouseAngle));
         //     }
         //     return bullets;
         // }
@@ -65,25 +67,25 @@ class Ghost extends Entity {
         let dx = mousePos.x - 400 - this.pos.x;
         let dy = mousePos.y - 50 - this.pos.y;
 
-        this.angle = Math.atan2(dy, dx);
+        this.mouseAngle = Math.atan2(dy, dx);
 
-        this.frameData.angle = this.angle;
+        this.frameData.mouseAngle = this.mouseAngle;
     }
 
     shoot() {
-        this.frameData.shoot = this.angle;
+        this.frameData.shoot = this.mouseAngle;
         this.cooldown = this.fireRate;
 
         let pos = this.pos.copy();
-        pos.add(p5.Vector.fromAngle(this.angle), 15);
+        pos.add(p5.Vector.fromAngle(this.mouseAngle), 15);
 
-        return new Bullet(pos, 15, this.angle);
+        return new Bullet(pos, 15, this.mouseAngle, true, [0, 255, 255]);
     }
 
     toObject() {
         return {
             pos: this.pos,
-            angle: this.angle,
+            angle: this.mouseAngle,
             r: this.r,
             type: this.type
         }

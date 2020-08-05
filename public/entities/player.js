@@ -7,18 +7,22 @@ class Player extends Entity {
         this.player = true;
 
         this.cooldown = 0;
+
+        this.colour = [255, 255, 0];
+
+        this.mouseAngle = 0;
     }
 
     update(game, pastData) {
         let bullets = [];
 
         if (pastData) {
-            this.angle = pastData.angle;
+            this.mouseAngle = pastData.mouseAngle;
             if (pastData.shoot != undefined && !game.rewinding) {
                 let pos = this.pos.copy();
-                pos.add(p5.Vector.fromAngle(this.angle), 15);
+                pos.add(p5.Vector.fromAngle(this.mouseAngle), 15);
 
-                bullets.push(new Bullet(pos, 15, this.angle));
+                bullets.push(new Bullet(pos, 15, this.mouseAngle));
             }
             return bullets;
         }
@@ -65,19 +69,19 @@ class Player extends Entity {
         let dx = mousePos.x - 400 - this.pos.x;
         let dy = mousePos.y - 50 - this.pos.y;
 
-        this.angle = Math.atan2(dy, dx);
+        this.mouseAngle = Math.atan2(dy, dx);
 
-        this.frameData.angle = this.angle;
+        this.frameData.mouseAngle = this.mouseAngle;
     }
 
     shoot() {
-        this.frameData.shoot = this.angle;
+        this.frameData.shoot = this.mouseAngle;
         this.cooldown = this.fireRate;
 
         let pos = this.pos.copy();
-        pos.add(p5.Vector.fromAngle(this.angle), 15);
+        pos.add(p5.Vector.fromAngle(this.mouseAngle), 15);
 
-        return new Bullet(pos, 15, this.angle);
+        return new Bullet(pos, 15, this.mouseAngle);
     }
 
     rewind(game) {
@@ -88,7 +92,7 @@ class Player extends Entity {
         //     let pastData = this.past.pop();
         //     this.pos.x = pastData.x;
         //     this.pos.y = pastData.y;
-        //     this.angle = pastData.angle;
+        //     this.mouseAngle = pastData.mouseAngle;
         //     this.deathTime = -1;
         // }
         if (game.time < this.birthTime) return;
@@ -97,7 +101,7 @@ class Player extends Entity {
             let pastData = this.past[this.past.length - indexFromEnd];
             this.pos.x = pastData.x;
             this.pos.y = pastData.y;
-            this.angle = pastData.angle;
+            this.mouseAngle = pastData.mouseAngle;
             this.deathTime = -1;
         }
     }
@@ -105,7 +109,7 @@ class Player extends Entity {
     toObject() {
         return {
             pos: this.pos,
-            angle: this.angle,
+            angle: this.mouseAngle,
             r: this.r,
             type: this.type
         }

@@ -15,6 +15,8 @@ class Shooty extends Enemy {
         this.cooldown = 60;
 
         this.scoreValue = 10;
+
+        this.colour = [255, 0, 255];
     }
 
     subUpdate(game, pastData) {
@@ -29,7 +31,7 @@ class Shooty extends Enemy {
 
         } else {
             if (pastData.shoot != undefined && !game.rewinding) {
-                bullets.push(new Bullet(this.pos.copy(), 15, pastData.shoot, false));
+                bullets.push(new Bullet(this.pos.copy(), 15, pastData.shoot, false, [255, 0, 255]));
                 return bullets;
             }
         }
@@ -86,6 +88,6 @@ class Shooty extends Enemy {
 
         this.frameData.shoot = angle;
 
-        return new Bullet(this.pos.copy(), 15, angle, false);
+        return new Bullet(this.pos.copy(), 15, angle, false, [255, 0, 255]);
     }
 }

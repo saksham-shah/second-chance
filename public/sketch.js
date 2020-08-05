@@ -12,6 +12,11 @@ function setup() {
 
     addScreen('game', {
         draw: () => drawGame(game.toObject())
+    })
+    .on('keyDown', e => {
+        if (game.gameover && e.keyCode == 32) {
+            game = new Game();
+        }
     });
 
     addStyles();
