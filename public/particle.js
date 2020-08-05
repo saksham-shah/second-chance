@@ -41,10 +41,13 @@ class Particle {
 
     toObject() {
         this.col[3] = this.life / this.maxLife * 255;
+        let r = this.r * this.life / this.maxLife;
+        if (r >= 10) console.error('big particle', this.life, this.maxLife);
+        if (this.maxLife < 0) console.log('negative life')
         return {
             pos: this.pos,
             colour: this.col,
-            r: this.r * this.life / this.maxLife
+            r
         }
     }
 
@@ -60,22 +63,23 @@ class Particle {
 
 Game.prototype.particleExplosion = function(options) {
     for (let i = 0; i < options.num; i++) {
+        let { speed, angle, life } = options;
         if (options.speedErr) {
-            options.speed += (Math.random() - 0.5) * 2 * options.speedErr;
+            speed += (Math.random() - 0.5) * 2 * options.speedErr;
         }
         if (options.angleErr) {
-            options.angle += (Math.random() - 0.5) * 2 * options.angleErr;
+            angle += (Math.random() - 0.5) * 2 * options.angleErr;
         }
         if (options.lifeErr) {
-            options.life += (Math.random() - 0.5) * 2 * options.lifeErr;
+            life += (Math.random() - 0.5) * 2 * options.lifeErr;
         }
         if (!options.gravity) {
             options.gravity = 0;
         }
 
-        let vel = p5.Vector.fromAngle(options.angle, options.speed);
+        let vel = p5.Vector.fromAngle(angle, speed);
 
-        let p = new Particle(options.pos.copy(), vel, options.r, options.life, options.col);
+        let p = new Particle(options.pos.copy(), vel, options.r, life, options.col);
         this.particles.push(p);
     }
 }

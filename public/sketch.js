@@ -60,7 +60,13 @@ function setup() {
 
     addScreen('game', {
         style: 'game',
-        draw: () => drawGame(game.toObject())
+        draw: () => drawGame(game.toObject()),
+        getCursorState: () => {
+            if (!game.gameover) {
+                if (game.ghost) return 'ghost';
+                return 'game';
+            }
+        }
     })
     .on('keyDown', e => {
         if (game.gameover && e.keyCode == 32) {
@@ -87,6 +93,10 @@ function setup() {
 
     setFont(font);
     setSounds(sounds);
+    setCursors({
+        game: 'assets/game.cur',
+        ghost: 'assets/ghost.cur'
+    });
 
     setScreen('menu');
 
