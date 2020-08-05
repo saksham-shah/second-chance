@@ -90,7 +90,7 @@ function addStyles() {
         },
         screen: {
             default: {
-                // background: [0, 0, 30],
+                background: [0, 0, 30],
                 outer: [0, 0, 50],
                 stroke: [0, 0, 100],
                 tooltip: {
@@ -100,8 +100,9 @@ function addStyles() {
                 }
             },
             game: {
-                background: 50,
-                outer: 60,
+                // background: [0, 0, 30],
+                outer: [0, 0, 50],
+                stroke: [0, 0, 100],
                 tooltip: {
                     fill: 200,
                     stroke: 50,

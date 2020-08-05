@@ -47,9 +47,12 @@ function drawGame(gameObj) {
         noStroke();
         textAlign(CENTER);
         textSize(100);
-        text('GAME OVER', 800, 250);
+        text('GAME OVER', 800, 200);
 
         textSize(50);
+        text(difficulties[game.stats.difficulty].toUpperCase(), 800, 275);
+
+        // textSize(50);
 
         text(`Time: ${framesToTime(game.stats.time)}`, 800, 390);
         text(`Score: ${game.stats.score}`, 800, 450);
@@ -58,6 +61,9 @@ function drawGame(gameObj) {
         text(`Longest survival: ${framesToTime(game.stats.survival)}`, 800, 630);
 
         text('Press space to play again', 800, 750);
+
+        textSize(40);
+        text('DIFFICULTY', 1400, 675);
     }
 
     function framesToTime(time) {

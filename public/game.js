@@ -1,5 +1,7 @@
 class Game {
-    constructor() {
+    constructor(difficulty) {
+        getElement('difficulty').hide(true);
+
         this.entities = [];
         this.player = null;
         this.bullets = [];
@@ -15,8 +17,28 @@ class Game {
         this.timeSinceEnemy = 0;
         this.counter = 0;
 
-        this.nextWave = 20;
-        this.waveStep = 4;
+        switch (difficulty) {
+            case 0:
+                this.nextWave = 5;
+                this.waveStep = 2;
+                break;
+            case 1:
+                this.nextWave = 10;
+                this.waveStep = 3;
+                break;
+            case 2:
+                this.nextWave = 20;
+                this.waveStep = 4;
+                break;
+            case 3:
+                this.nextWave = 40;
+                this.waveStep = 5;
+                break;
+            default:
+                this.nextWave = 10;
+                this.waveStep = 3;
+                
+        }
 
         this.playerDead = false;
 
@@ -41,7 +63,8 @@ class Game {
             score: 0,
             combo: 0,
             rewind: 0,
-            survival: 0
+            survival: 0,
+            difficulty
         }
         // this.addEnemy();
     }
@@ -279,6 +302,7 @@ class Game {
             let thisSurvival = this.lastRewind - 2 * this.maxRewind;
             if (thisSurvival > this.stats.survival) this.stats.survival = thisSurvival;
             if (this.lastRewind < 3 * this.maxRewind) {
+                getElement('difficulty').hide(false);
                 this.gameover = true;
                 this.stats.time = this.time;
                 this.stats.score = this.score;
