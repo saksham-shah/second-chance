@@ -170,6 +170,7 @@ class P5UI {
         window.mousePressed = e => {
             self.getActiveScreen().emit('mouseDown', e);
             self.cursor.showTooltip = false;
+            window.focus();
             return false;
         }
         
