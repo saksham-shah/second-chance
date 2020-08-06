@@ -21,6 +21,8 @@ class Entity {
         this.birthTime = -1;
         this.frameData = null;
         this.deathTime = -1;
+
+        this.unborn = false;
     }
 
     superUpdate(game) {

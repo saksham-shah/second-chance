@@ -178,6 +178,7 @@ class Game {
             if (Math.random() < this.spawnPoints * 0.025 || this.timeSinceEnemy > 180) {
                 this.spawnEnemy();
                 this.timeSinceEnemy = 0;
+                sounds.enemyspawn.play();
             }
         } else {
             this.counter -= 1;
@@ -195,6 +196,10 @@ class Game {
                 entity.hit = false;
             }
             if (entity.deathTime < 0 && entity.birthTime <= this.time) {
+                if (entity.unborn && !entity.player) {
+                    entity.unborn = false;
+                    sounds.enemyspawn.play();
+                }
                 let bullets = entity.superUpdate(this);
 
                 for (let bullet of bullets) {
@@ -218,6 +223,7 @@ class Game {
                 if (entity.type == 'splity' && entity.stage == 1) {
                     this.entities.splice(i, 1);
                 }
+                entity.unborn = true;
             }
         }
 
@@ -248,6 +254,7 @@ class Game {
 
             } else if (bullet.birthTime > this.time) {
                 this.bullets.splice(i, 1);
+                sounds.bulletreverse.play();
             }
         }
 
@@ -316,6 +323,8 @@ class Game {
                         col: entity.colour,
                         num: 20
                     });
+
+                    if (entity.type != 'player') sounds.enemydeath.play();
                 }
 
                 if (!entity.player && !this.rewinding && !entity.scored) {
@@ -383,11 +392,17 @@ class Game {
                     col: this.player.colour,
                     num: 20
                 });
+
+                sounds.gameover.play();
                 // game = new Game();
                 return;
             }
             this.player.hit = false;
             this.toggleRewind(true);
+
+            sounds.rewind.play();
+            // sounds.rewind2.play();
+            // sounds.rewind3.play();
 
             // setTimeout(() => {
             //     // game = new Game();

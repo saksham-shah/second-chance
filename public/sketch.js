@@ -7,14 +7,66 @@ let highscore = 0;
 
 let sounds = {}, font;
 
-let dt;
-// let now, dt, lastUpdate = Date.now();
+const soundsToLoad = [
+    {
+        name: 'click',
+        file: 'buttonclick.wav'
+    }, {
+        name: 'hover',
+        file: 'buttonhover.mp3'
+    }, {
+        name: 'playershoot',
+        file: 'playershoot.wav'
+    }, {
+        name: 'enemyshoot',
+        file: 'enemyshoot.wav'
+    }, {
+        name: 'rewind',
+        file: 'rewind.wav'
+    }, {
+        name: 'rewind2',
+        file: 'rewind2.wav'
+    }, {
+        name: 'gameover',
+        file: 'gameover.wav'
+    }, {
+        name: 'enemydeath',
+        file: 'enemydeath.wav'
+    }, {
+        name: 'enemyspawn',
+        file: 'enemyspawn.wav'
+    }, {
+        name: 'shootyrage',
+        file: 'shootyrage.wav'
+    }, {
+        name: 'bulletreverse',
+        file: 'bulletreverse.wav'
+    },
+];
+
+const volumes = {
+    hover: 2,
+    playershoot: 0.5,
+    gameover: 2,
+    enemyspawn: 0.5,
+    rewind2: 2,
+    bulletreverse: 0.3
+}
 
 function preload() {
-    sounds.click = loadSound('assets/buttonclick.wav');
-    sounds.hover = loadSound('assets/buttonhover.mp3');
+    for (let sound of soundsToLoad) {
+        let p5sound = loadSound('assets/' + sound.file);
+        let vol = volumes[sound.name];
+        if (vol == undefined) vol = 1;
+        p5sound.setVolume(vol);
 
-    sounds.click.setVolume(0.3);
+        sounds[sound.name] = p5sound;
+    }
+    // sounds.click = loadSound('assets/buttonclick.wav');
+    // sounds.hover = loadSound('assets/buttonhover.mp3');
+    // sounds.shoot = loadSound('assets/playershoot.wav');
+
+    // sounds.click.setVolume(0.3);
 
     font = loadFont('assets/ShareTechMono-Regular.ttf');
 }
@@ -119,15 +171,7 @@ function setup() {
 
 }
 
-function draw() {
-    // now = Date.now();
-	// dt = (now - lastUpdate) / (1000 / 60); //dt will be 1 at 60fps
-	// lastUpdate = now;
-	// if (dt > 15) {
-	// 	dt = 15;
-    // }
-    dt = deltaTime * 60 / 1000;
-    
+function draw() {    
     if (game) game.update();
 
     updateUI();

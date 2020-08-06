@@ -79,6 +79,8 @@ class Ghost extends Entity {
         let pos = this.pos.copy();
         pos.add(p5.Vector.fromAngle(this.mouseAngle), 15);
 
+        sounds.playershoot.play();
+
         return new Bullet(pos, 15, this.mouseAngle, true, [0, 255, 255]);
     }
 
