@@ -14,10 +14,12 @@ function createSpawns() {
         new Spawn(1, 0,
             function(game) {
                 let pos, distFromPlayerSq;
+                let attempts = 0;
                 do {
+                    attempts++;
                     pos = createVector(50 + Math.random() * 700, 50 + Math.random() * 700);
                     distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
-                } while (distFromPlayerSq < 15000)
+                } while (distFromPlayerSq < 15000 && attempts < 20)
                 game.entities.push(new Shooty(pos));
             }
         ),
@@ -25,18 +27,29 @@ function createSpawns() {
         new Spawn(1, 50,
             function(game) {
                 let pos, distFromPlayerSq;
+                let attempts = 0;
                 do {
+                    attempts++;
                     pos = game.player.pos.copy();
                     pos.add(p5.Vector.mult(game.player.vel, 20));
                     pos.x += Math.random() * 250 - 125;
                     pos.y += Math.random() * 250 - 125;
-                    if (pos.x < 50) pos.x = 50;
-                    if (pos.y < 50) pos.y = 50;
-                    if (pos.x > 750) pos.x = 750;
-                    if (pos.y > 750) pos.y = 750;
+                    if (pos.x < 15) pos.x = 15;
+                    if (pos.y < 15) pos.y = 15;
+                    if (pos.x > 785) pos.x = 785;
+                    if (pos.y > 785) pos.y = 785;
 
                     distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
-                } while (distFromPlayerSq < 15000)
+                } while (distFromPlayerSq < 15000 && attempts < 20)
+
+                if (distFromPlayerSq < 15000) {
+                    attempts = 0;
+                    do {
+                        attempts++;
+                        pos = createVector(50 + Math.random() * 700, 50 + Math.random() * 700);
+                        distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
+                    } while (distFromPlayerSq < 15000 && attempts < 20)
+                }
                 game.entities.push(new Spiky(pos));
             }
         ),
@@ -44,10 +57,12 @@ function createSpawns() {
         new Spawn(3, 200,
             function(game) {
                 let pos, distFromPlayerSq;
+                let attempts = 0;
                 do {
+                    attempts++;
                     pos = createVector(50 + Math.random() * 700, 50 + Math.random() * 700);
                     distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
-                } while (distFromPlayerSq < 40000)
+                } while (distFromPlayerSq < 40000 && attempts < 20)
                 game.entities.push(new Splity(pos));
             }
         ),
