@@ -87,6 +87,10 @@ function drawGame(gameObj) {
 
     text(score, 1400, 200);
 
+    textSize(30);
+    text('HIGH SCORE', 1400, 275);
+    text(highscore, 1400, 315);
+
     // Draw combo
     let percentage = (game.comboTime - lastKill) / game.comboTime;
     if (comboPercentage < percentage) {

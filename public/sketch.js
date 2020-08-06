@@ -3,7 +3,12 @@ let gameWidth = 800, gameHeight = 800;
 let difficulty = 0;
 let difficulties = ['Easy', 'Normal', 'Hard', 'Insane'];
 
+let highscore = 0;
+
 let sounds = {}, font;
+
+let dt;
+// let now, dt, lastUpdate = Date.now();
 
 function preload() {
     sounds.click = loadSound('assets/buttonclick.wav');
@@ -55,6 +60,7 @@ function setup() {
         textSize: 50,
         onClick: () => {
             difficulty = (difficulty + 1) % difficulties.length;
+            localStorage.setItem('difficulty', difficulty);
         }
     })
 
@@ -82,6 +88,7 @@ function setup() {
         textSize: 50,
         onClick: () => {
             difficulty = (difficulty + 1) % difficulties.length;
+            localStorage.setItem('difficulty', difficulty);
         },
         hidden: true,
         label: 'difficulty'
@@ -100,9 +107,27 @@ function setup() {
 
     setScreen('menu');
 
+    let storedDifficulty = localStorage.getItem('difficulty');
+    if (storedDifficulty !== null) {
+        difficulty = parseInt(storedDifficulty);
+    }
+
+    let storedHS = localStorage.getItem('highscore');
+    if (storedHS !== null) {
+        highscore = parseInt(storedHS);
+    }
+
 }
 
 function draw() {
+    // now = Date.now();
+	// dt = (now - lastUpdate) / (1000 / 60); //dt will be 1 at 60fps
+	// lastUpdate = now;
+	// if (dt > 15) {
+	// 	dt = 15;
+    // }
+    dt = deltaTime * 60 / 1000;
+    
     if (game) game.update();
 
     updateUI();

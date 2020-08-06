@@ -85,7 +85,8 @@ class Game {
             combo: 0,
             rewind: 0,
             survival: 0,
-            difficulty
+            difficulty,
+            newHS: false
         }
         // this.addEnemy();
     }
@@ -329,6 +330,11 @@ class Game {
 
                     // Increase score
                     this.score += entity.scoreValue * combo;
+
+                    if (this.score > highscore) {
+                        this.stats.newHS = true;
+                        highscore = this.score;
+                    }
                 }
                 // this.entities.splice(i, 1);
             }
@@ -345,6 +351,12 @@ class Game {
                 this.gameover = true;
                 this.stats.time = this.time;
                 this.stats.score = this.score;
+
+                if (this.stats.newHS) {
+                    localStorage.setItem('highscore', this.score);
+                    // highscore = this.score;
+                }
+
             // if (this.time < this.lastRewind + this.maxRewind + 10) {
                 this.particleExplosion({
                     pos: this.player.pos.copy(),
