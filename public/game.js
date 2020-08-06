@@ -1,6 +1,7 @@
 class Game {
     constructor(difficulty) {
         getElement('difficulty').hide(true);
+        setFilter(false);
 
         this.entities = [];
         this.player = null;
@@ -357,6 +358,8 @@ class Game {
             if (thisSurvival > this.stats.survival) this.stats.survival = thisSurvival;
             if (this.lastRewind < 3 * this.maxRewind) {
                 getElement('difficulty').hide(false);
+                setFilter(true);
+
                 this.gameover = true;
                 this.stats.time = this.time;
                 this.stats.score = this.score;
@@ -414,6 +417,7 @@ class Game {
 
     toggleRewind(rewind) {
         this.rewinding = rewind;
+        setFilter(rewind);
 
         if (rewind) {
             this.lastRewind = 0;

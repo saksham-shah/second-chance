@@ -5,10 +5,19 @@ let difficulties = ['Easy', 'Normal', 'Hard', 'Insane'];
 
 let highscore = 0;
 
-let sounds = {}, font;
+let sounds = {}, font, filter, filterToggled = true;
+
+function setFilter(bool) {
+    if (filterToggled == bool) return;
+    filter.toggle();
+    filterToggled = !filterToggled;
+}
 
 const soundsToLoad = [
     {
+        name: 'music',
+        file: 'secondchance.wav'
+    }, {
         name: 'click',
         file: 'buttonclick.wav'
     }, {
@@ -45,6 +54,7 @@ const soundsToLoad = [
 ];
 
 const volumes = {
+    music: 0.7,
     hover: 2,
     playershoot: 0.5,
     gameover: 2,
@@ -73,6 +83,13 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+
+    sounds.music.loop();
+
+    filter = new p5.LowPass();
+    filter.freq(400);
+    sounds.music.disconnect();
+    sounds.music.connect(filter);
 
     createUI({
         width: 1600,

@@ -226,6 +226,14 @@ function drawEntity(entity) {
             vertex(entity.r * Math.cos(Math.PI * 2 / 3), entity.r * Math.sin(Math.PI * 2 / 3));
             vertex(entity.r * Math.cos(Math.PI * 4 / 3), entity.r * Math.sin(Math.PI * 4 / 3));
             endShape(CLOSE);
+
+            if (entity.enraged) {
+                rotate(-entity.angle);
+                translate(0, -40)
+                rotate(0.3 * Math.sin(frameCount / 30 * Math.PI * 2))
+                rect(0, 15, 5, 5);
+                rect(0, -2.5, 5, 20);
+            }
             break;
         case 'spiky':
             fill(200, 120, 0, 150);

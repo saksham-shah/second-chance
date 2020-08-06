@@ -24,16 +24,18 @@ class Shooty extends Enemy {
 
         if (!pastData) {
             this.updateEnraged();
+            this.frameData.rage = this.enraged;
 
             if (this.cooldown > 0) this.cooldown--;
     
             if (this.cooldown == 0) bullets.push(this.shoot(game.player));
 
         } else {
-            if (pastData.rage !== undefined && !game.rewinding) {
-                this.enraged = pastData.rage;
-                if (this.enraged && !game.gameover) sounds.shootyrage.play();
-            }
+            // if (pastData.rage !== undefined) {
+                // console.log('rewind rage')
+            if (!game.rewinding && !this.enraged && pastData.rage && !game.gameover) sounds.shootyrage.play();
+            // }
+            this.enraged = pastData.rage;
 
             if (pastData.shoot != undefined && !game.rewinding) {
                 if (!game.gameover) sounds.enemyshoot.play();
@@ -68,7 +70,6 @@ class Shooty extends Enemy {
     }
 
     rageUpdate() {
-        this.frameData.rage = this.enraged;
         if (this.enraged) {
             this.cooldown = 0;
             this.fireRate = 10;
