@@ -24,4 +24,12 @@ class Enemy extends Entity {
         this.acc.add(des);
         this.acc.sub(this.vel);
     }
+
+    isColliding(game, player = game.player) {
+        if (player.deathTime >= 0 || player.birthTime > game.time) return false;
+
+        let diffVec = p5.Vector.sub(this.pos, player.pos);
+        let dSq = diffVec.magSq();
+        return dSq < Math.pow(this.r + player.r, 2);
+    }
 }

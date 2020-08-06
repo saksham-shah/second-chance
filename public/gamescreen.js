@@ -223,6 +223,28 @@ function drawEntity(entity) {
             vertex(entity.r * Math.cos(Math.PI * 4 / 3), entity.r * Math.sin(Math.PI * 4 / 3));
             endShape(CLOSE);
             break;
+        case 'spiky':
+            fill(200, 120, 0, 150);
+            stroke(255, 150, 0);
+            beginShape();
+            let spikes = 16;
+            let aOffset = Math.PI * 2 / spikes;
+            let r1 = entity.r;
+            let r2 = r1 * 1.2;
+            for (let i = 0; i < spikes; i++) {
+                let a1 = i * aOffset;
+                let a2 = a1 + aOffset * 0.5;
+                vertex(r2 * Math.cos(a1), r2 * Math.sin(a1));
+                vertex(r1 * Math.cos(a2), r1 * Math.sin(a2));
+            }
+            endShape(CLOSE);
+            // ellipse(0, 0, entity.r * 2);
+            break;
+        case 'splity':
+            fill(0, 200, 0, 150);
+            stroke(0, 255, 0);
+            rect(0, 0, entity.r * 2, entity.r * 2);
+            break;
         default:
             fill(0);
             stroke(255);

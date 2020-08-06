@@ -36,9 +36,30 @@ class Game {
                 break;
             default:
                 this.nextWave = 10;
-                this.waveStep = 3;
-                
+                this.waveStep = 3;   
         }
+
+        // switch (difficulty) {
+        //     case 0:
+        //         this.nextWave = 10;
+        //         this.waveStep = 4;
+        //         break;
+        //     case 1:
+        //         this.nextWave = 20;
+        //         this.waveStep = 6;
+        //         break;
+        //     case 2:
+        //         this.nextWave = 40;
+        //         this.waveStep = 8;
+        //         break;
+        //     case 3:
+        //         this.nextWave = 80;
+        //         this.waveStep = 10;
+        //         break;
+        //     default:
+        //         this.nextWave = 20;
+        //         this.waveStep = 6;   
+        // }
 
         this.playerDead = false;
 
@@ -164,7 +185,9 @@ class Game {
 
     updateEntitiesBullets() {
         if (this.time < 0) return;
-        for (let entity of this.entities) {
+        // for (let entity of this.entities) {
+        for (let i = 0; i < this.entities.length; i++) {
+            let entity = this.entities[i];
             if (entity.deathTime >= this.time && entity.type != 'ghost') {
                 // console.log('reviving', entity.type, this.time);
                 entity.deathTime = -1;
@@ -189,6 +212,10 @@ class Game {
                         num: 10
                     });
                     // console.log(bullet);
+                }
+            } else if (entity.birthTime > this.time) {
+                if (entity.type == 'splity' && entity.stage == 1) {
+                    this.entities.splice(i, 1);
                 }
             }
         }
@@ -250,6 +277,18 @@ class Game {
             } else if (entity.hit) {
                 if (entity.type != 'ghost') {
                     entity.deathTime = this.time;
+
+                    if (entity.type == 'splity' && entity.stage == 0) {
+                        let splity1 = new Splity(entity.pos.copy(), 1);
+                        let splity2 = new Splity(entity.pos.copy(), 1);
+
+                        this.entities.push(splity1);
+                        this.entities.push(splity2);
+
+                        let angleVec = p5.Vector.fromAngle(entity.hitAngle + Math.PI / 2, 25);
+                        splity1.vel.add(angleVec);
+                        splity2.vel.sub(angleVec);
+                    }
 
                     this.particleExplosion({
                         pos: entity.pos.copy(),

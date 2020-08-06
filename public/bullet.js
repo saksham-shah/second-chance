@@ -82,6 +82,7 @@ class Bullet {
             let dSq = diffVec.magSq();
             if (dSq < entity.r * entity.r) {
                 entity.hit = true;
+                entity.hitAngle = this.angle;
                 return true;
             }
         }

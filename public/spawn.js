@@ -13,10 +13,44 @@ function createSpawns() {
         // Shooty Enemy
         new Spawn(1, 0,
             function(game) {
-                let pos = createVector(50 + Math.random() * 800, 50 + Math.random() * 500);
+                let pos, distFromPlayerSq;
+                do {
+                    pos = createVector(50 + Math.random() * 700, 50 + Math.random() * 700);
+                    distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
+                } while (distFromPlayerSq < 15000)
                 game.entities.push(new Shooty(pos));
             }
-        )
+        ),
+        // Spiky Enemy
+        new Spawn(1, 50,
+            function(game) {
+                let pos, distFromPlayerSq;
+                do {
+                    pos = game.player.pos.copy();
+                    pos.add(p5.Vector.mult(game.player.vel, 20));
+                    pos.x += Math.random() * 250 - 125;
+                    pos.y += Math.random() * 250 - 125;
+                    if (pos.x < 50) pos.x = 50;
+                    if (pos.y < 50) pos.y = 50;
+                    if (pos.x > 750) pos.x = 750;
+                    if (pos.y > 750) pos.y = 750;
+
+                    distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
+                } while (distFromPlayerSq < 15000)
+                game.entities.push(new Spiky(pos));
+            }
+        ),
+        // Splity Enemy
+        new Spawn(3, 200,
+            function(game) {
+                let pos, distFromPlayerSq;
+                do {
+                    pos = createVector(50 + Math.random() * 700, 50 + Math.random() * 700);
+                    distFromPlayerSq = p5.Vector.sub(pos, game.player.pos).magSq();
+                } while (distFromPlayerSq < 40000)
+                game.entities.push(new Splity(pos));
+            }
+        ),
     ]
 }
 
@@ -29,8 +63,8 @@ Game.prototype.spawnEnemy = function() {
     var possible = [];
     var highest = 0;
     for (var i = 0; i < spawns.length; i++) {
-        // if (this.score >= spawns[i].reqScore && this.spawnPoints >= spawns[i].reqPoints) {
-        if (this.spawnPoints >= spawns[i].reqPoints) {
+        if (this.score >= spawns[i].reqScore && this.spawnPoints >= spawns[i].reqPoints) {
+        // if (this.spawnPoints >= spawns[i].reqPoints) {
             possible.push(spawns[i]);
             if (spawns[i].reqPoints > highest) {
                 highest = spawns[i].reqPoints;
