@@ -43,24 +43,24 @@ function drawGame(gameObj) {
         stroke(0, 0, 100, 30 + 255 * blurred);
         rect(800, 450, 800, 800);
 
-        fill(255);
+        fill(titleColours[titleColour]);
         noStroke();
         textAlign(CENTER);
         textSize(100);
         text('GAME OVER', 800, 200);
 
         textSize(50);
+        text('Press space to play again', 800, 750);
+
+        fill(titleColours[game.stats.difficulty]);
         text(difficulties[game.stats.difficulty].toUpperCase(), 800, 275);
 
-        // textSize(50);
-
+        fill(255);
         text(`Time: ${framesToTime(game.stats.time)}`, 800, 390);
         text(`Score: ${game.stats.score}`, 800, 450);
         text(`Rewinds: ${game.stats.rewind}`, 800, 510);
         text(`Highest combo: ${game.stats.combo}`, 800, 570);
         text(`Longest survival: ${framesToTime(game.stats.survival)}`, 800, 630);
-
-        text('Press space to play again', 800, 750);
 
         textSize(40);
         text('DIFFICULTY', 1400, 675);
@@ -110,6 +110,7 @@ function drawGame(gameObj) {
 
         fill(0, 200, 0, 150);
         stroke(0, 255, 0);
+        strokeWeight(1);
         arc(0, 0, r * 2, r * 2, -Math.PI / 2, comboPercentage * 2 * Math.PI - Math.PI / 2);
 
         fill(0, 0, 40);
@@ -146,6 +147,7 @@ function drawGame(gameObj) {
     fill(0, 0, 40);
     noStroke();
     ellipse(0, 0, r * 2);
+    strokeWeight(3);
 
     // fill(100, 150);
 
@@ -169,8 +171,8 @@ function drawGame(gameObj) {
             fill(75);
             break;
         default:
-            fill(75);
-            stroke(255);
+            fill(0, 75, 0);
+            stroke(0, 255, 0);
             ellipse(0, 0, r * 2);
     }
 

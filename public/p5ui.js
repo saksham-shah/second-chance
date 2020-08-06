@@ -943,7 +943,7 @@ main.Button = class Button extends core_element {
 
         if (strokeColour != -1) {
             stroke(strokeColour);
-            strokeWeight(1);
+            strokeWeight(5);
         } else {
             noStroke();
         }

@@ -1,11 +1,16 @@
 let game;
 let gameWidth = 800, gameHeight = 800;
 let difficulty = 0;
-let difficulties = ['Easy', 'Normal', 'Hard', 'Insane'];
+let difficulties = ['Tutorial', 'Easy', 'Normal', 'Hard', 'Insane'];
 
 let highscore = 0;
 
 let sounds = {}, font, filter, filterToggled = true;
+
+let titleColours = [[255, 255, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [255, 150, 0]];
+let titleColour = 0;
+
+let difficultyColours = ['yellow', 'green', 'blue', 'pink', 'orange'];
 
 function setFilter(bool) {
     if (filterToggled == bool) return;
@@ -87,7 +92,7 @@ function setup() {
     sounds.music.loop();
 
     filter = new p5.LowPass();
-    filter.freq(400);
+    filter.freq(600);
     sounds.music.disconnect();
     sounds.music.connect(filter);
 
@@ -97,25 +102,31 @@ function setup() {
         buffer: 1
     });
 
+    setInterval(() => {
+        titleColour = (titleColour + 1) % titleColours.length;
+    }, 500);
+    
     addScreen('menu', {
         draw: () => {
             textAlign(CENTER);
-            fill(255);
+            fill(titleColours[titleColour]);
             noStroke();
 
             textSize(150);
             text('Second Chance', 800, 200);
 
+            fill(255);
             textSize(40);
             text('DIFFICULTY', 800, 675);
         }
     })
     .addButton({
+        style: 'yellow',
         position: { x: 800, y: 450 },
         width: 300,
         height: 150,
         text: 'PLAY',
-        textSize: 75,
+        textSize: 100,
         onClick: () => {
             setScreen('game');
             game = new Game(difficulty);
@@ -123,19 +134,25 @@ function setup() {
     })
     .addButton({
         position: { x: 800, y: 750 },
-        width: 200,
+        width: 250,
         height: 75,
         text: () => difficulties[difficulty],
         textSize: 50,
         onClick: () => {
             difficulty = (difficulty + 1) % difficulties.length;
             localStorage.setItem('difficulty', difficulty);
-        }
+            getElement('menu difficulty')._setStyle(difficultyColours[difficulty]);
+            getElement('game difficulty')._setStyle(difficultyColours[difficulty]);
+        },
+        label: 'menu difficulty'
     })
 
     addScreen('game', {
         style: 'game',
-        draw: () => drawGame(game.toObject()),
+        draw: () => {
+            drawGame(game.toObject());
+            drawTutorials();
+        },
         getCursorState: () => {
             if (!game.gameover) {
                 if (game.ghost) return 'ghost';
@@ -149,18 +166,20 @@ function setup() {
         }
     })
     .addButton({
-        style: 'default',
+        // style: 'default',
         position: { x: 1400, y: 750 },
-        width: 200,
+        width: 250,
         height: 75,
         text: () => difficulties[difficulty],
         textSize: 50,
         onClick: () => {
             difficulty = (difficulty + 1) % difficulties.length;
             localStorage.setItem('difficulty', difficulty);
+            getElement('menu difficulty')._setStyle(difficultyColours[difficulty]);
+            getElement('game difficulty')._setStyle(difficultyColours[difficulty]);
         },
         hidden: true,
-        label: 'difficulty'
+        label: 'game difficulty'
     });
 
     addStyles();
@@ -180,6 +199,9 @@ function setup() {
     if (storedDifficulty !== null) {
         difficulty = parseInt(storedDifficulty);
     }
+    
+    getElement('menu difficulty')._setStyle(difficultyColours[difficulty]);
+    getElement('game difficulty')._setStyle(difficultyColours[difficulty]);
 
     let storedHS = localStorage.getItem('highscore');
     if (storedHS !== null) {
@@ -188,7 +210,8 @@ function setup() {
 
 }
 
-function draw() {    
+function draw() {
+    updateTutorials();
     if (game) game.update();
 
     updateUI();

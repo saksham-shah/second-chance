@@ -9,12 +9,52 @@ function addStyles() {
                     fill: 100
                 }
             },
-            controls: {
-                fill: 200,
-                stroke: 20,
-                text: 20,
+            game: {
+                fill: 75,
+                stroke: 45,
+                text: 255,
                 hover: {
-                    fill: 180
+                    fill: 100
+                }
+            },
+            yellow: {
+                fill: [200, 200, 0, 150],
+                stroke: [255, 255, 0],
+                text: [255, 255, 0],
+                hover: {
+                    fill: [150, 150, 0, 150]
+                }
+            },
+            blue: {
+                fill: [0, 200, 200, 150],
+                stroke: [0, 255, 255],
+                text: [0, 255, 255],
+                hover: {
+                    fill: [0, 150, 150, 150]
+                }
+            },
+            pink: {
+                fill: [200, 0, 200, 150],
+                stroke: [255, 0, 255],
+                text: [255, 0, 255],
+                hover: {
+                    fill: [150, 0, 150, 150]
+                }
+            },
+            green: {
+                fill: [0, 200, 0, 150],
+                stroke: [0, 255, 0],
+                text: [0, 255, 0],
+                hover: {
+                    fill: [0, 150, 0, 150]
+                }
+            },
+            orange: {
+                fill: [200, 120, 0, 150],
+                stroke: [255, 150, 0],
+                text: [255, 150, 0],
+                hover: {
+                    fill: [150, 120, 0, 150]
                 }
             }
         },

@@ -1,6 +1,6 @@
 class Game {
     constructor(difficulty) {
-        getElement('difficulty').hide(true);
+        getElement('game difficulty').hide(true);
         setFilter(false);
 
         this.entities = [];
@@ -20,24 +20,38 @@ class Game {
 
         switch (difficulty) {
             case 0:
+                this.nextWave = 3;
+                this.waveStep = 1;
+                break;
+            case 1:
                 this.nextWave = 5;
                 this.waveStep = 2;
                 break;
-            case 1:
+            case 2:
                 this.nextWave = 10;
                 this.waveStep = 3;
                 break;
-            case 2:
+            case 3:
                 this.nextWave = 20;
                 this.waveStep = 4;
                 break;
-            case 3:
+            case 4:
                 this.nextWave = 40;
                 this.waveStep = 5;
                 break;
             default:
-                this.nextWave = 10;
-                this.waveStep = 3;   
+                this.nextWave = 3;
+                this.waveStep = 1;   
+        }
+
+        if (difficulty == 0) {
+            startTutorial();
+
+            tutorial('move');
+
+            setTimeout(() => tutorial('aim'), 1500);
+
+            setTimeout(() => tutorial('ready'), 3000);
         }
 
         // switch (difficulty) {
@@ -131,6 +145,11 @@ class Game {
 
                     this.ghost = null;
 
+                    if (this.stats.difficulty == 0) {
+                        tutorial('afterrewind');
+
+                        setTimeout(() => tutorial('goodluck'), 1500);
+                    };
                 }
             }
             this.time++;
@@ -287,7 +306,7 @@ class Game {
                 if (entity.type != 'ghost') {
                     entity.deathTime = this.time;
 
-                    if (entity.type == 'splity' && entity.stage == 0) {
+                    if (!this.gameover && entity.type == 'splity' && entity.stage == 0) {
                         let splity1 = new Splity(entity.pos.copy(), 1);
                         let splity2 = new Splity(entity.pos.copy(), 1);
 
@@ -325,10 +344,10 @@ class Game {
                         num: 20
                     });
 
-                    if (entity.type != 'player') sounds.enemydeath.play();
+                    if (entity.type != 'player' && !this.gameover) sounds.enemydeath.play();
                 }
 
-                if (!entity.player && !this.rewinding && !entity.scored) {
+                if (!this.gameover && !entity.player && !this.rewinding && !entity.scored) {
                     entity.scored = true;
                     this.lastKill = 0;
                     this.combo++;
@@ -357,7 +376,7 @@ class Game {
             let thisSurvival = this.lastRewind - 2 * this.maxRewind;
             if (thisSurvival > this.stats.survival) this.stats.survival = thisSurvival;
             if (this.lastRewind < 3 * this.maxRewind) {
-                getElement('difficulty').hide(false);
+                getElement('game difficulty').hide(false);
                 setFilter(true);
 
                 this.gameover = true;
@@ -367,6 +386,10 @@ class Game {
                 if (this.stats.newHS) {
                     localStorage.setItem('highscore', this.score);
                     // highscore = this.score;
+                }
+
+                for (let entity of this.entities) {
+                    entity.hit = true;
                 }
 
             // if (this.time < this.lastRewind + this.maxRewind + 10) {
@@ -397,7 +420,8 @@ class Game {
                 });
 
                 sounds.gameover.play();
-                // game = new Game();
+
+                if (this.stats.difficulty == 0) endTutorial();
                 return;
             }
             this.player.hit = false;
@@ -424,9 +448,13 @@ class Game {
             // this.lastRewind = this.time;
             this.combo = 0;
             this.stats.rewind++;
+
+            if (this.stats.difficulty == 0) tutorial('rewind');
         } else {
             this.ghost = new Ghost(this.player);
             this.entities.push(this.ghost);
+
+            if (this.stats.difficulty == 0) tutorial('ghost');
         }
     }
 
