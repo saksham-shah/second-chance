@@ -37,6 +37,18 @@ function drawGame(gameObj) {
 
     pop();
 
+    // Pause symbol
+    if (game.paused) {
+        noStroke();
+        fill(255, 50);
+        rect(750, 450, 30, 200);
+        rect(850, 450, 30, 200);
+
+        textAlign(CENTER);
+        textSize(40);
+        text('PAUSED', 800, 600);
+    }
+
     // Game over screen
     if (game.gameover) {
         fill(0, 0, 30, 150);
@@ -208,6 +220,15 @@ function drawEntity(entity) {
             strokeWeight(5);
             line(entity.r + 15, 0, entity.r + 10, 5)
             line(entity.r + 15, 0, entity.r + 10, -5)
+
+            let offset = game.lastRewind - 2 * game.maxRewind;
+            if (offset >= 0 && offset < 120) {
+                // Circle flashes
+                noFill();
+                stroke(255, 255, 0, 75 - 75 * Math.cos(offset * 2 * Math.PI / 40));
+                strokeWeight(entity.r * 1.5);
+                ellipse(0, 0, entity.r * 8);
+            }
             break;
         case 'ghost':
             fill(0, 200, 200, 150);

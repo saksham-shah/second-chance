@@ -2,6 +2,7 @@ class Game {
     constructor(difficulty) {
         getElement('game difficulty').hide(true);
         setFilter(false);
+        resetTutorial();
 
         this.entities = [];
         this.player = null;
@@ -49,9 +50,9 @@ class Game {
 
             tutorial('move');
 
-            setTimeout(() => tutorial('aim'), 1500);
+            // setTimeout(() => tutorial('aim'), 1000);
 
-            setTimeout(() => tutorial('ready'), 3000);
+            setTimeout(() => tutorial('ready', 4.5), 2160);
         }
 
         // switch (difficulty) {
@@ -93,6 +94,7 @@ class Game {
         this.comboTime = 60;
 
         this.gameover = false;
+        this.paused = false;
 
         this.stats = {
             time: 0,
@@ -119,13 +121,13 @@ class Game {
 
                     this.particleExplosion({
                         pos: this.ghost.pos.copy(),
-                        speed: 0.05,
-                        speedErr: 0.05,
+                        speed: 0.1,
+                        speedErr: 0.1,
                         angle: 0,
                         angleErr: Math.PI * 2,
                         r: 7,
-                        life: 300,
-                        lifeErr: 150,
+                        life: 180,
+                        lifeErr: 60,
                         col: this.ghost.colour,
                         num: 20
                     });
@@ -145,11 +147,7 @@ class Game {
 
                     this.ghost = null;
 
-                    if (this.stats.difficulty == 0) {
-                        tutorial('afterrewind');
-
-                        setTimeout(() => tutorial('goodluck'), 1500);
-                    };
+                    if (this.stats.difficulty == 0) tutorial('goodluck', 9);
                 }
             }
             this.time++;
@@ -198,7 +196,6 @@ class Game {
             if (Math.random() < this.spawnPoints * 0.025 || this.timeSinceEnemy > 180) {
                 this.spawnEnemy();
                 this.timeSinceEnemy = 0;
-                sounds.enemyspawn.play();
             }
         } else {
             this.counter -= 1;
@@ -449,12 +446,12 @@ class Game {
             this.combo = 0;
             this.stats.rewind++;
 
-            if (this.stats.difficulty == 0) tutorial('rewind');
+            if (this.stats.difficulty == 0) tutorial('rewind', 6);
         } else {
             this.ghost = new Ghost(this.player);
             this.entities.push(this.ghost);
 
-            if (this.stats.difficulty == 0) tutorial('ghost');
+            if (this.stats.difficulty == 0) tutorial('ghost', 7.5);
         }
     }
 

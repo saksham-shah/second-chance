@@ -1,13 +1,13 @@
 // The tutorial system is taken from another project of mine
 const phrases = {
-    move: 'Use WASD to move around.',
-    aim: 'Use the mouse to aim and click to fire.',
-    ready: 'When you are hit, you will rewind.',
-    rewind: 'You have been hit and are rewinding...',
-    ghost: 'You are the blue player.\n\nSave your past self by killing the enemy before it kills them!',
-    afterrewind: 'When the clock turns green again, you can rewind.',
-    goodluck: 'If you die before the clock turns green, the game is over.\n\nGood luck!',
-    diedearly: 'Oops! You died!\nFeel free to try again and complete the tutorial.'
+    move: ['Use WASD to move around.', 'Use the mouse to aim and click to fire.'],
+    // aim: ['Use the mouse to aim and click to fire.'],
+    ready: ['The clock is green.', 'This means that when you are hit, you will rewind.'],
+    rewind: ['You have been hit and are about to rewind...', 'Remember what enemy killed you, and pay attention to where they spawned from!', 'You are going to travel to the past and kill that enemy, saving yourself.'],
+    ghost: ['You are the ghost (the blue player).', 'Save your past self by killing the enemy before it kills them!', 'If you fail to stop your past self from dying, it\'s game over.', 'TIP: Find where the enemy is or spawned from, and fire there to kill it as soon as possible.'],
+    // afterrewind: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.', 'Look at the clock - there is a cooldown before you can rewind again.'],
+    goodluck: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.', 'Look at the clock - there is a cooldown before you can rewind again.', 'If you die before the clock turns green, the game is over.', 'Good luck!'],
+    diedearly: ['Oops! You died!\nFeel free to try again and complete the tutorial.']
 }
 
 let used = {};
@@ -23,11 +23,25 @@ function startTutorial() {
         totalPhrases++;
     }
 
-    tutorial = key => {
+    tutorial = (key, wait = 0) => {
         if (!tutorialEnded && !used[key]) {
             used[key] = true;
-            addTutorial(phrases[key]);
+            addTutorial(phrases[key][0]);
+
+            if (phrases[key].length > 1) {
+                for (let i = 1; i < phrases[key].length; i++) {
+                    setTimeout(() => {
+                        if (!tutorialEnded) addTutorial(phrases[key][i]);
+                    }, 1500 * i)
+                }
+            }
             totalPhrases--;
+
+            if (wait > 0) {
+                game.paused = true;
+    
+                setTimeout(() => game.paused = false, wait * 1000);
+            }
         }
     }
 
@@ -44,6 +58,12 @@ function startTutorial() {
 let tutorialLines = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 let tutorialTimes = [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180];
 let nextTutorial = 0;
+
+function resetTutorial() {
+    tutorialLines = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+    tutorialTimes = [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180];
+    nextTutorial = 0;
+}
 
 function addTutorial(msg) {
     let lines = wrapText(msg, 30, 750);

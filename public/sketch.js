@@ -5,96 +5,38 @@ let difficulties = ['Tutorial', 'Easy', 'Normal', 'Hard', 'Insane'];
 
 let highscore = 0;
 
-let sounds = {}, font, filter, filterToggled = true;
-
 let titleColours = [[255, 255, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [255, 150, 0]];
 let titleColour = 0;
 
 let difficultyColours = ['yellow', 'green', 'blue', 'pink', 'orange'];
 
-function setFilter(bool) {
-    if (filterToggled == bool) return;
-    filter.toggle();
-    filterToggled = !filterToggled;
-}
+// function preload() {
+//     for (let sound of soundsToLoad) {
+//         let p5sound = loadSound('assets/' + sound.file);
+//         let vol = volumes[sound.name];
+//         if (vol == undefined) vol = 1;
+//         p5sound.setVolume(vol);
 
-const soundsToLoad = [
-    {
-        name: 'music',
-        file: 'secondchance.wav'
-    }, {
-        name: 'click',
-        file: 'buttonclick.wav'
-    }, {
-        name: 'hover',
-        file: 'buttonhover.mp3'
-    }, {
-        name: 'playershoot',
-        file: 'playershoot.wav'
-    }, {
-        name: 'enemyshoot',
-        file: 'enemyshoot.wav'
-    }, {
-        name: 'rewind',
-        file: 'rewind.wav'
-    }, {
-        name: 'rewind2',
-        file: 'rewind2.wav'
-    }, {
-        name: 'gameover',
-        file: 'gameover.wav'
-    }, {
-        name: 'enemydeath',
-        file: 'enemydeath.wav'
-    }, {
-        name: 'enemyspawn',
-        file: 'enemyspawn.wav'
-    }, {
-        name: 'shootyrage',
-        file: 'shootyrage.wav'
-    }, {
-        name: 'bulletreverse',
-        file: 'bulletreverse.wav'
-    },
-];
+//         sounds[sound.name] = p5sound;
+//     }
+//     // sounds.click = loadSound('assets/buttonclick.wav');
+//     // sounds.hover = loadSound('assets/buttonhover.mp3');
+//     // sounds.shoot = loadSound('assets/playershoot.wav');
 
-const volumes = {
-    music: 0.7,
-    hover: 2,
-    playershoot: 0.5,
-    gameover: 2,
-    enemyspawn: 0.5,
-    rewind2: 2,
-    bulletreverse: 0.3
-}
+//     // sounds.click.setVolume(0.3);
 
-function preload() {
-    for (let sound of soundsToLoad) {
-        let p5sound = loadSound('assets/' + sound.file);
-        let vol = volumes[sound.name];
-        if (vol == undefined) vol = 1;
-        p5sound.setVolume(vol);
-
-        sounds[sound.name] = p5sound;
-    }
-    // sounds.click = loadSound('assets/buttonclick.wav');
-    // sounds.hover = loadSound('assets/buttonhover.mp3');
-    // sounds.shoot = loadSound('assets/playershoot.wav');
-
-    // sounds.click.setVolume(0.3);
-
-    font = loadFont('assets/ShareTechMono-Regular.ttf');
-}
+//     font = loadFont('assets/ShareTechMono-Regular.ttf');
+// }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    sounds.music.loop();
+    // sounds.music.loop();
 
-    filter = new p5.LowPass();
-    filter.freq(600);
-    sounds.music.disconnect();
-    sounds.music.connect(filter);
+    // filter = new p5.LowPass();
+    // filter.freq(600);
+    // sounds.music.disconnect();
+    // sounds.music.connect(filter);
 
     createUI({
         width: 1600,
@@ -102,9 +44,7 @@ function setup() {
         buffer: 1
     });
 
-    setInterval(() => {
-        titleColour = (titleColour + 1) % titleColours.length;
-    }, 500);
+    addLoadScreen();
     
     addScreen('menu', {
         draw: () => {
@@ -153,7 +93,8 @@ function setup() {
             drawGame(game.toObject());
             drawTutorials();
         },
-        getCursorState: () => {
+        getCursorState: state => {
+            if (state) return state;
             if (!game.gameover) {
                 if (game.ghost) return 'ghost';
                 return 'game';
@@ -180,20 +121,33 @@ function setup() {
         },
         hidden: true,
         label: 'game difficulty'
+    })
+    .addButton({
+        style: 'yellow',
+        position: { x: 200, y: 750 },
+        width: 250,
+        height: 75,
+        text: () => 'BACK',
+        textSize: 50,
+        onClick: () => {
+            setScreen('menu');
+            if (game.stats.difficulty == 0) endTutorial();
+            game = null;
+        }
     });
 
     addStyles();
 
     setupUI();
 
-    setFont(font);
-    setSounds(sounds);
+    // setFont(font);
+    // setSounds(sounds);
     setCursors({
         game: 'assets/game.cur',
         ghost: 'assets/ghost.cur'
     });
 
-    setScreen('menu');
+    setScreen('loading');
 
     let storedDifficulty = localStorage.getItem('difficulty');
     if (storedDifficulty !== null) {
@@ -212,7 +166,7 @@ function setup() {
 
 function draw() {
     updateTutorials();
-    if (game) game.update();
+    if (game && !game.paused) game.update();
 
     updateUI();
     drawUI();

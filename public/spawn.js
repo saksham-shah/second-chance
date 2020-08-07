@@ -100,6 +100,7 @@ Game.prototype.spawnEnemy = function() {
         currentTotal += possible[i].randScore;
         if (currentTotal > randomNum) {
             possible[i].doFunction(this);
+            sounds.enemyspawn.play();
             this.spawnPoints -= possible[i].reqPoints;
             return possible[i];
         }
