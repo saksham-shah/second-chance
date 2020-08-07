@@ -10,33 +10,88 @@ let titleColour = 0;
 
 let difficultyColours = ['yellow', 'green', 'blue', 'pink', 'orange'];
 
-// function preload() {
-//     for (let sound of soundsToLoad) {
-//         let p5sound = loadSound('assets/' + sound.file);
-//         let vol = volumes[sound.name];
-//         if (vol == undefined) vol = 1;
-//         p5sound.setVolume(vol);
+let sounds = {}, font;
+let filter;
+let filterToggle = true;
 
-//         sounds[sound.name] = p5sound;
-//     }
-//     // sounds.click = loadSound('assets/buttonclick.wav');
-//     // sounds.hover = loadSound('assets/buttonhover.mp3');
-//     // sounds.shoot = loadSound('assets/playershoot.wav');
+function setFilter(bool) {
+    if (filterToggle == bool) return;
+    filter.toggle();
+    filterToggle = !filterToggle;
+}
+const soundsToLoad = [
+    {
+        name: 'music',
+        file: 'secondchance.wav'
+    }, {
+        name: 'click',
+        file: 'buttonclick.wav'
+    }, {
+        name: 'hover',
+        file: 'buttonhover.mp3'
+    }, {
+        name: 'playershoot',
+        file: 'playershoot.wav'
+    }, {
+        name: 'enemyshoot',
+        file: 'enemyshoot.wav'
+    }, {
+        name: 'rewind',
+        file: 'rewind.wav'
+    }, {
+        name: 'gameover',
+        file: 'gameover.wav'
+    }, {
+        name: 'enemydeath',
+        file: 'enemydeath.wav'
+    }, {
+        name: 'enemyspawn',
+        file: 'enemyspawn.wav'
+    }, {
+        name: 'shootyrage',
+        file: 'shootyrage.wav'
+    }, {
+        name: 'bulletreverse',
+        file: 'bulletreverse.wav'
+    },
+];
 
-//     // sounds.click.setVolume(0.3);
+const volumes = {
+    music: 0.7,
+    hover: 2,
+    playershoot: 0.5,
+    gameover: 2,
+    enemyspawn: 0.5,
+    bulletreverse: 0.3
+}
 
-//     font = loadFont('assets/ShareTechMono-Regular.ttf');
-// }
+function preload() {
+    for (let sound of soundsToLoad) {
+        let p5sound = loadSound('assets/' + sound.file);
+        let vol = volumes[sound.name];
+        if (vol == undefined) vol = 1;
+        p5sound.setVolume(vol);
+
+        sounds[sound.name] = p5sound;
+    }
+    // sounds.click = loadSound('assets/buttonclick.wav');
+    // sounds.hover = loadSound('assets/buttonhover.mp3');
+    // sounds.shoot = loadSound('assets/playershoot.wav');
+
+    // sounds.click.setVolume(0.3);
+
+    font = loadFont('assets/ShareTechMono-Regular.ttf');
+}
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    // sounds.music.loop();
+    sounds.music.loop();
 
-    // filter = new p5.LowPass();
-    // filter.freq(600);
-    // sounds.music.disconnect();
-    // sounds.music.connect(filter);
+    filter = new p5.LowPass();
+    filter.freq(600);
+    sounds.music.disconnect();
+    sounds.music.connect(filter);
 
     createUI({
         width: 1600,
@@ -44,7 +99,7 @@ function setup() {
         buffer: 1
     });
 
-    addLoadScreen();
+    // addLoadScreen();
     
     addScreen('menu', {
         draw: () => {
@@ -140,14 +195,14 @@ function setup() {
 
     setupUI();
 
-    // setFont(font);
-    // setSounds(sounds);
+    setFont(font);
+    setSounds(sounds);
     setCursors({
         game: 'assets/game.cur',
         ghost: 'assets/ghost.cur'
     });
 
-    setScreen('loading');
+    setScreen('menu');
 
     let storedDifficulty = localStorage.getItem('difficulty');
     if (storedDifficulty !== null) {
