@@ -86,6 +86,10 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
+    setInterval(() => {
+        titleColour = (titleColour + 1) % titleColours.length;
+    }, 500);
+
     sounds.music.loop();
 
     filter = new p5.LowPass();
