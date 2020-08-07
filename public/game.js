@@ -21,8 +21,8 @@ class Game {
 
         switch (difficulty) {
             case 0:
-                this.nextWave = 3;
-                this.waveStep = 1;
+                this.nextWave = 5;
+                this.waveStep = 2;
                 break;
             case 1:
                 this.nextWave = 5;
@@ -40,6 +40,10 @@ class Game {
                 this.nextWave = 40;
                 this.waveStep = 5;
                 break;
+            case 5:
+                this.nextWave = 1000;
+                this.waveStep = 100;
+                break;
             default:
                 this.nextWave = 3;
                 this.waveStep = 1;   
@@ -48,11 +52,13 @@ class Game {
         if (difficulty == 0) {
             startTutorial();
 
-            tutorial('move');
+            setTimeout(() => tutorial('move', () => {
+                setTimeout(() => tutorial('ready'), 2160);
+            }), 20);
 
             // setTimeout(() => tutorial('aim'), 1000);
 
-            setTimeout(() => tutorial('ready', 4.5), 2160);
+            // setTimeout(() => tutorial('ready', 4.5), 2160);
         }
 
         // switch (difficulty) {
@@ -95,6 +101,7 @@ class Game {
 
         this.gameover = false;
         this.paused = false;
+        this.readyToUnpause = false;
 
         this.stats = {
             time: 0,
@@ -147,7 +154,7 @@ class Game {
 
                     this.ghost = null;
 
-                    if (this.stats.difficulty == 0) tutorial('goodluck', 9);
+                    if (this.stats.difficulty == 0) tutorial('saved', () => tutorial('goodluck'));
                 }
             }
             this.time++;
@@ -446,12 +453,12 @@ class Game {
             this.combo = 0;
             this.stats.rewind++;
 
-            if (this.stats.difficulty == 0) tutorial('rewind', 6);
+            if (this.stats.difficulty == 0) tutorial('rewind');
         } else {
             this.ghost = new Ghost(this.player);
             this.entities.push(this.ghost);
 
-            if (this.stats.difficulty == 0) tutorial('ghost', 7.5);
+            if (this.stats.difficulty == 0) tutorial('ghost');
         }
     }
 

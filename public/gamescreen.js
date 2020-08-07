@@ -46,7 +46,7 @@ function drawGame(gameObj) {
 
         textAlign(CENTER);
         textSize(40);
-        text('PAUSED', 800, 600);
+        text(game.readyToUnpause ? 'CLICK TO CONTINUE' : 'PAUSED', 800, 600);
     }
 
     // Game over screen
@@ -226,8 +226,8 @@ function drawEntity(entity) {
                 // Circle flashes
                 noFill();
                 stroke(255, 255, 0, 75 - 75 * Math.cos(offset * 2 * Math.PI / 40));
-                strokeWeight(entity.r * 1.5);
-                ellipse(0, 0, entity.r * 8);
+                strokeWeight(entity.r * 3);
+                ellipse(0, 0, entity.r * 9);
             }
             break;
         case 'ghost':

@@ -4,15 +4,16 @@ const phrases = {
     // aim: ['Use the mouse to aim and click to fire.'],
     ready: ['The clock is green.', 'This means that when you are hit, you will rewind.'],
     rewind: ['You have been hit and are about to rewind...', 'Remember what enemy killed you, and pay attention to where they spawned from!', 'You are going to travel to the past and kill that enemy, saving yourself.'],
-    ghost: ['You are the ghost (the blue player).', 'Save your past self by killing the enemy before it kills them!', 'If you fail to stop your past self from dying, it\'s game over.', 'TIP: Find where the enemy is or spawned from, and fire there to kill it as soon as possible.'],
+    ghost: ['You are the ghost (the blue player).', 'Save your past self by killing the enemy before it kills the yellow player (your past self)!', 'If you fail to stop your past self from dying, it\'s game over.', 'TIP: Find where the enemy is or spawned from, and fire there to kill it as soon as possible.'],
     // afterrewind: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.', 'Look at the clock - there is a cooldown before you can rewind again.'],
-    goodluck: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.', 'Look at the clock - there is a cooldown before you can rewind again.', 'If you die before the clock turns green, the game is over.', 'Good luck!'],
-    diedearly: ['Oops! You died!\nFeel free to try again and complete the tutorial.']
+    saved: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.'],
+    goodluck: ['Look at the clock - there is a cooldown before you can rewind again.', 'If you die before the clock turns green, the game is over.', 'Good luck!'],
+    diedearly: ['Oops! You died!\n\nFeel free to try again and complete the tutorial.']
 }
 
 let used = {};
 
-let tutorial, endTutorial;
+let tutorial, endTutorial, tutorialCallback;
 
 function startTutorial() {
     let used = {};
@@ -23,31 +24,31 @@ function startTutorial() {
         totalPhrases++;
     }
 
-    tutorial = (key, wait = 0) => {
+    tutorial = (key, callback) => {
         if (!tutorialEnded && !used[key]) {
             used[key] = true;
-            addTutorial(phrases[key][0]);
 
-            if (phrases[key].length > 1) {
-                for (let i = 1; i < phrases[key].length; i++) {
-                    setTimeout(() => {
-                        if (!tutorialEnded) addTutorial(phrases[key][i]);
-                    }, 1500 * i)
-                }
+            for (let i = 0; i < phrases[key].length; i++) {
+                setTimeout(() => {
+                    if (!tutorialEnded) addTutorial(phrases[key][i]);
+                }, 2000 * i)
             }
+
+            game.paused = true;
+            game.readyToUnpause = false;
+            tutorialCallback = callback;
+
+            setTimeout(() => game.readyToUnpause = true, phrases[key].length * 2000);
+
             totalPhrases--;
 
-            if (wait > 0) {
-                game.paused = true;
-    
-                setTimeout(() => game.paused = false, wait * 1000);
-            }
         }
     }
 
     endTutorial = () => {
         if (totalPhrases > 0) {
-            tutorial('diedearly');
+            // tutorial('diedearly');
+            addTutorial(phrases.diedearly[0]);
         }
 
         tutorialEnded = true;
@@ -56,12 +57,10 @@ function startTutorial() {
 
 // Game messages that popup on the screen and fade out after 180 frames (3 seconds)
 let tutorialLines = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
-let tutorialTimes = [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180];
 let nextTutorial = 0;
 
 function resetTutorial() {
     tutorialLines = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
-    tutorialTimes = [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 180];
     nextTutorial = 0;
 }
 
@@ -70,23 +69,13 @@ function addTutorial(msg) {
     // Each message is separated by an empty line
     lines.push('');
 
-    // Work out if the whole array of game messages is empty
-    // Means the next message can be added at the top of the screen again
-    let allDone = true;
-    for (let time of tutorialTimes) {
-        if (time < 180) allDone = false; 
-    }
-    if (allDone) nextTutorial = 0;
-
     // If the new message goes over the message line limit (fills the whole screen)
     if (nextTutorial + lines.length > tutorialLines.length) {
         let count = nextTutorial + lines.length - tutorialLines.length;
         // Remove messages from the top as needed, to make the new message fit
         for (let i = 0; i < count; i++) {
             tutorialLines.splice(0, 1);
-            tutorialTimes.splice(0, 1);
             tutorialLines.push('');
-            tutorialTimes.push(180);
             nextTutorial--;
         }
     }
@@ -94,18 +83,7 @@ function addTutorial(msg) {
     // Add the message lines
     for (let line of lines) {
         tutorialLines[nextTutorial] = line;
-        tutorialTimes[nextTutorial] = 0;
         nextTutorial++;
-    }
-}
-
-function updateTutorials() {
-    for (let i = tutorialLines.length - 1; i >= 0; i--) {
-        tutorialTimes[i]++;
-        // Message disappears after 180 frames (3 seconds)
-        if (tutorialTimes[i] >= 180) {
-            tutorialLines[i] = '';
-        }
     }
 }
 
@@ -115,21 +93,15 @@ function drawTutorials() {
     textAlign(CENTER);
     noStroke();
 
-    for (let i = 0; i < tutorialTimes.length; i++) {
+    for (let i = 0; i < tutorialLines.length; i++) {
         if (tutorialLines[i] == '') continue;
-
-        let a = 1;
-        // Message smoothly fades away
-        if (tutorialTimes[i] >= 170) {
-            a = (180 - tutorialTimes[i]) / 10;
-        }
 
         // Draw a partially transparent rectangle around the text to make it more visible
         let y = 100 + i * 40;
-        fill(0, 0, 30, (game.gameover ? 255: 100) * a);
+        fill(0, 0, 30, game.gameover ? 255: 100);
         rect(800, y, textWidth(tutorialLines[i]) + 10, 40);
 
-        fill(255, 255, 0, 255 * a);
+        fill(255, 255, 0, 255);
         text(tutorialLines[i], 800, y + 10);
     }
 

@@ -56,6 +56,14 @@ function addStyles() {
                 hover: {
                     fill: [150, 120, 0, 150]
                 }
+            },
+            red: {
+                fill: [200, 0, 0, 150],
+                stroke: [255, 0, 0],
+                text: [255, 0, 0],
+                hover: {
+                    fill: [150, 0, 0, 150]
+                }
             }
         },
         chatbox: {

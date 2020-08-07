@@ -1,14 +1,14 @@
 let game;
 let gameWidth = 800, gameHeight = 800;
 let difficulty = 0;
-let difficulties = ['Tutorial', 'Easy', 'Normal', 'Hard', 'Insane'];
+let difficulties = ['Tutorial', 'Easy', 'Normal', 'Hard', 'Insane', 'Impossible'];
 
 let highscore = 0;
 
-let titleColours = [[255, 255, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [255, 150, 0]];
+let titleColours = [[255, 255, 0], [0, 255, 0], [0, 255, 255], [255, 0, 255], [255, 150, 0], [255, 0, 0]];
 let titleColour = 0;
 
-let difficultyColours = ['yellow', 'green', 'blue', 'pink', 'orange'];
+let difficultyColours = ['yellow', 'green', 'blue', 'pink', 'orange', 'red'];
 
 let sounds = {}, font;
 let filter;
@@ -87,8 +87,14 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
     setInterval(() => {
-        titleColour = (titleColour + 1) % titleColours.length;
+        titleColour = (titleColour + 1) % 5;
     }, 500);
+
+    setTimeout(() => {
+        resizeCanvas(windowWidth, windowHeight);
+
+        resizeUI();
+    }, 2000);
 
     sounds.music.loop();
 
@@ -133,7 +139,7 @@ function setup() {
     })
     .addButton({
         position: { x: 800, y: 750 },
-        width: 250,
+        width: 300,
         height: 75,
         text: () => difficulties[difficulty],
         textSize: 50,
@@ -165,10 +171,17 @@ function setup() {
             game = new Game(difficulty);
         }
     })
+    .on('mouseDown', e => {
+        if (game.paused && game.readyToUnpause) {
+            game.paused = false;
+            resetTutorial();
+            if (typeof tutorialCallback == 'function') tutorialCallback();
+        }
+    })
     .addButton({
         // style: 'default',
         position: { x: 1400, y: 750 },
-        width: 250,
+        width: 300,
         height: 75,
         text: () => difficulties[difficulty],
         textSize: 50,
@@ -224,7 +237,7 @@ function setup() {
 }
 
 function draw() {
-    updateTutorials();
+    // updateTutorials();
     if (game && !game.paused) game.update();
 
     updateUI();
