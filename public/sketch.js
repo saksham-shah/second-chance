@@ -197,7 +197,7 @@ function setup() {
     .addButton({
         style: 'yellow',
         position: { x: 200, y: 750 },
-        width: 250,
+        width: 300,
         height: 75,
         text: () => 'BACK',
         textSize: 50,

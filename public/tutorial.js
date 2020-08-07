@@ -4,7 +4,7 @@ const phrases = {
     // aim: ['Use the mouse to aim and click to fire.'],
     ready: ['The clock is green.', 'This means that when you are hit, you will rewind.'],
     rewind: ['You have been hit and are about to rewind...', 'Remember what enemy killed you, and pay attention to where they spawned from!', 'You are going to travel to the past and kill that enemy, saving yourself.'],
-    ghost: ['You are the ghost (the blue player).', 'Save your past self by killing the enemy before it kills the yellow player (your past self)!', 'If you fail to stop your past self from dying, it\'s game over.', 'TIP: Find where the enemy is or spawned from, and fire there to kill it as soon as possible.'],
+    ghost: ['You are the ghost (the blue player).', 'Kill the enemy before it kills your past self (the yellow player)!', 'If you fail to stop your past self from dying, it\'s game over.', 'TIP: Find where the enemy is or spawned from, and fire there to kill it as soon as possible.'],
     // afterrewind: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.', 'Look at the clock - there is a cooldown before you can rewind again.'],
     saved: ['Congratulations, you saved yourself!', 'The ghost is no longer needed and you control the yellow player again.'],
     goodluck: ['Look at the clock - there is a cooldown before you can rewind again.', 'If you die before the clock turns green, the game is over.', 'Good luck!'],
@@ -38,7 +38,10 @@ function startTutorial() {
             game.readyToUnpause = false;
             tutorialCallback = callback;
 
-            setTimeout(() => game.readyToUnpause = true, phrases[key].length * 2000);
+            setTimeout(() => {
+                game.readyToUnpause = true;
+                sounds.enemyspawn.play();
+            }, phrases[key].length * 2000);
 
             totalPhrases--;
 
@@ -65,6 +68,7 @@ function resetTutorial() {
 }
 
 function addTutorial(msg) {
+    sounds.enemyspawn.play();
     let lines = wrapText(msg, 30, 750);
     // Each message is separated by an empty line
     lines.push('');

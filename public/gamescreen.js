@@ -128,11 +128,11 @@ function drawGame(gameObj) {
         fill(0, 0, 40);
         arc(0, 0, r * 1.5, r * 1.5, -Math.PI / 2, comboPercentage * 2 * Math.PI - Math.PI / 2);
 
-        textSize(r);
+        textSize(r * 0.75);
         textAlign(CENTER);
         noStroke();
         fill(255);
-        text(combo + 'x', 0, r/3);
+        text(combo + 'x', 0, r / 4);
 
         pop();
     }
