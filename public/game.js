@@ -52,11 +52,11 @@ class Game {
         if (difficulty == 0) {
             startTutorial();
 
-            setTimeout(() => tutorial('move', () => {
-                setTimeout(() => tutorial('ready'), 2160);
-            }), 20);
+            // setTimeout(() => tutorial('move', () => {
+            //     setTimeout(() => tutorial('ready'), 2160);
+            // }), 20);
 
-            // setTimeout(() => tutorial('aim'), 1000);
+            setTimeout(() => tutorial('move'), 20);
 
             // setTimeout(() => tutorial('ready', 4.5), 2160);
         }
@@ -121,6 +121,7 @@ class Game {
         if (!this.rewinding) {
             if (this.lastRewind > 2 * this.maxRewind) {
             // if (this.time >= this.lastRewind) {
+                if (this.stats.difficulty == 0 && this.lastRewind == 3 * this.maxRewind) tutorial('ready');
                 if (!this.gameover) this.updateSpawns();
                 if (this.ghost) {
                     // this.ghost.hit = true;
