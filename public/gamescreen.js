@@ -9,7 +9,8 @@ function drawGame(gameObj) {
     //     background(0, 0, 30, 255);
     // }
 
-    fill(0, 0, 40, 30 + 255 * blurred);
+    // fill(0, 0, 40, 30 + 255 * blurred);
+    fill(0, 0, 40);
     noStroke();
     rect(800, 25, 1600, 50);
     rect(800, 875, 1600, 50);
@@ -17,7 +18,7 @@ function drawGame(gameObj) {
     rect(1400, 450, 400, 900);
 
     noFill();
-    stroke(0, 0, 100, 30 + 255 * blurred);
+    stroke(0, 0, 100);
     rect(800, 450, 800, 800);
 
     push();
@@ -156,9 +157,9 @@ function drawGame(gameObj) {
     push();
     translate(200, 500);
 
-    fill(0, 0, 40);
-    noStroke();
-    ellipse(0, 0, r * 2);
+    // fill(0, 0, 40);
+    // noStroke();
+    // ellipse(0, 0, r * 2);
     strokeWeight(3);
 
     // fill(100, 150);
