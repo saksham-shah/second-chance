@@ -32,7 +32,7 @@ class Particle {
         this.life--;
 
         this.past.push({ x: this.pos.x, y: this.pos.y, life: this.life, time: game.time });
-        if (this.past.length > game.maxRewind) {
+        if (this.past.length > game.maxRewind + 1) {
             this.past.splice(0, 1);
         }
 

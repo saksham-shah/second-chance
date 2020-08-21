@@ -29,11 +29,12 @@ class Entity {
         if (this.past.length > 0 && this.past[this.past.length - 1].time >= game.time) {
             let indexFromEnd = this.past[this.past.length - 1].time - game.time;
             let pastData = this.past[this.past.length - indexFromEnd - 1];
+            let bullets = this.update(game, pastData);
             this.pos.x = pastData.x;
             this.pos.y = pastData.y;
             this.angle = pastData.angle;
             this.deathTime = -1;
-            return this.update(game, pastData);
+            return bullets;
         }
 
         if (this.birthTime < 0) this.birthTime = game.time; 
@@ -57,7 +58,7 @@ class Entity {
         this.frameData.angle = this.angle;
 
         this.past.push(this.frameData);
-        if (this.past.length > game.maxRewind) {
+        if (this.past.length > game.maxRewind + 1) {
             this.past.splice(0, 1);
         }
 

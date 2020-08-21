@@ -91,7 +91,7 @@ class Game {
         this.blur = 1;
 
         this.maxRewind = 120;
-        this.lastRewind = 2 * this.maxRewind;
+        this.lastRewind = 2 * this.maxRewind - 1;
 
         this.score = 0;
         this.lastKill = 0;
@@ -171,7 +171,7 @@ class Game {
             if (this.time > 0) this.time--;
             this.updateEntitiesBullets();
 
-            if (this.lastRewind >= this.maxRewind - 1) {
+            if (this.lastRewind >= this.maxRewind) {
             // if (this.time <= this.lastRewind - this.maxRewind + 1) {
                 this.toggleRewind(false);
             } else if (this.lastRewind >= this.maxRewind - 20) {

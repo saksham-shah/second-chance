@@ -46,7 +46,7 @@ class Bullet {
         this.pos.y = y;
 
         this.past.push({ x, y, time: game.time });
-        if (this.past.length > game.maxRewind) {
+        if (this.past.length > game.maxRewind + 1) {
             this.past.splice(0, 1);
         }
 
